@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakers Hub - Shopping</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+</head>
+<body onload="initShopping()">
+     Top Navigation (Desktop) 
+    <nav class="navbar navbar-expand-lg fixed-top d-none d-lg-flex">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-cookie-bite"></i>Bakers Hub
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link" href="dashboard.html">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a class="nav-link" href="orders.html">
+                    <i class="fas fa-birthday-cake"></i>Orders
+                </a>
+                <a class="nav-link" href="expenses.html">
+                    <i class="fas fa-receipt"></i>Expenses
+                </a>
+                <a class="nav-link" href="pantry.html">
+                    <i class="fas fa-seedling"></i>Pantry
+                </a>
+                <a class="nav-link active" href="shopping.html">
+                    <i class="fas fa-shopping-cart"></i>Shopping
+                </a>
+                <a class="nav-link" href="profile.html">
+                    <i class="fas fa-user"></i>Profile
+                </a>
+            </div>
+        </div>
+    </nav>
+
+     Mobile Header 
+    <header class="mobile-header d-lg-none">
+        <div class="mobile-header-content">
+            <div class="mobile-brand">
+                <i class="fas fa-cookie-bite"></i>
+                <span class="brand-text">Bakers Hub</span>
+            </div>
+            <div class="mobile-header-actions">
+                <button class="btn btn-mobile-action" onclick="window.location.href='profile.html'">
+                    <i class="fas fa-user"></i>
+                </button>
+                <button class="btn btn-mobile-action" id="mobileNotificationBtn">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge">3</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+     Bottom Navigation (Mobile) 
+    <nav class="bottom-nav d-lg-none">
+        <a class="bottom-nav-item" href="orders.html">
+            <i class="fas fa-birthday-cake"></i>
+            <span>Orders</span>
+        </a>
+        <a class="bottom-nav-item" href="pantry.html">
+            <i class="fas fa-seedling"></i>
+            <span>Pantry</span>
+        </a>
+        <a class="bottom-nav-item" href="dashboard.html">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a class="bottom-nav-item active" href="shopping.html">
+            <i class="fas fa-shopping-cart"></i>
+            <span>Shopping</span>
+        </a>
+        <a class="bottom-nav-item" href="expenses.html">
+            <i class="fas fa-receipt"></i>
+            <span>Expenses</span>
+        </a>
+    </nav>
+
+     Floating Action Button (Mobile) 
+    <div class="fab-container d-lg-none">
+        <button class="fab" id="mainFab">
+            <i class="fas fa-plus"></i>
+        </button>
+        <div class="fab-menu" id="fabMenu">
+            <button class="fab-option" data-bs-toggle="modal" data-bs-target="#addShoppingListModal">
+                <i class="fas fa-shopping-list"></i>
+                <span>New List</span>
+            </button>
+        </div>
+    </div>
+
+     Main Content 
+    <main class="main-content">
+        <div class="container-fluid">
+             Page Header 
+            <div class="page-header">
+                <div class="page-header-content">
+                    <h1 class="page-title">Shopping Lists</h1>
+                    <p class="page-subtitle">Organize your shopping by store</p>
+                </div>
+                <button class="btn btn-primary d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#addShoppingListModal">
+                    <i class="fas fa-plus me-2"></i>New List
+                </button>
+            </div>
+
+             Shopping Lists Grid 
+            <div class="shopping-lists-grid" id="shoppingListsGrid">
+                 Shopping lists will be populated by JavaScript 
+            </div>
+        </div>
+    </main>
+
+     Add Shopping List Modal 
+    <div class="modal fade" id="addShoppingListModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Shopping List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addShoppingListForm">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">List Name</label>
+                                <input type="text" class="form-control" id="shoppingListName" placeholder="e.g., Dmart List, Walmart List" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Store/Location</label>
+                                <input type="text" class="form-control" id="shoppingListStore" placeholder="Optional">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Color Theme</label>
+                                <select class="form-select" id="shoppingListColor">
+                                    <option value="primary">Blue</option>
+                                    <option value="success">Green</option>
+                                    <option value="warning">Orange</option>
+                                    <option value="danger">Red</option>
+                                    <option value="info">Cyan</option>
+                                    <option value="purple">Purple</option>
+                                </select>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Notes</label>
+                                <textarea class="form-control" id="shoppingListNotes" rows="2" placeholder="Any special notes about this shopping list"></textarea>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="addShoppingList()">Create List</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     Shopping List Items Modal 
+    <div class="modal fade" id="shoppingListItemsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="shoppingListModalTitle">Shopping List Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                     Add Item Form 
+                    <div class="card mb-4">
+                        <div class="card-body">
+                            <h6 class="card-title">Add New Item</h6>
+                            <form id="addItemToListForm">
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="newItemName" placeholder="Item name" required>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="newItemQuantity" placeholder="Quantity">
+                                    </div>
+                                    <div class="col-md-3">
+                                        <input type="number" class="form-control" id="newItemEstPrice" step="0.01" placeholder="Est. price">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary w-100" onclick="addItemToCurrentList()">
+                                            <i class="fas fa-plus"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                     Items List 
+                    <div class="shopping-items-container" id="shoppingItemsContainer">
+                         Items will be populated by JavaScript 
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="me-auto">
+                        <small class="text-muted">
+                            Total Items: <span id="modalTotalItems">0</span> | 
+                            Bought: <span id="modalBoughtItems">0</span> | 
+                            Estimated: $<span id="modalEstimatedTotal">0.00</span>
+                        </small>
+                    </div>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/shopping.js"></script>
+</body>
+</html>

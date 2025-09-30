@@ -10,7 +10,7 @@ from utils.decorators import handle_exceptions, check_authentication  # assuming
 class OrderViewSet(viewsets.ViewSet):
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user_id = request.query_params.get('user_id')
         if not user_id:
@@ -45,7 +45,7 @@ class OrderViewSet(viewsets.ViewSet):
         elif created_year:
             orders = orders.filter(created_at__year=int(created_year))
 
-        serializer = OrderSerializer(orders, many=True)
+        serializer = OrderSerializer(orders[::-1], many=True)
         return Response({
             "success": True,
             "user_not_logged_in": False,
@@ -55,7 +55,7 @@ class OrderViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def create(self, request):
         data = request.data
         user_id = request.user.user_id
@@ -121,7 +121,7 @@ class OrderViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def update(self, request, pk=None):
         try:
             order = Order.objects.get(pk=pk, is_active=True)
@@ -152,7 +152,7 @@ class OrderViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def partial_update(self, request, pk=None):
         try:
             order = Order.objects.get(pk=pk, is_active=True)
@@ -180,7 +180,7 @@ class OrderViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             order = Order.objects.get(pk=pk, is_active=True)
@@ -211,7 +211,7 @@ class OrderViewSet(viewsets.ViewSet):
 class CategoryViewSet(viewsets.ViewSet):
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user_id = request.query_params.get('user_id')
         if not user_id:
@@ -234,7 +234,7 @@ class CategoryViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def create(self, request):
         user_id = request.data.get('user_id')
         category_name = request.data.get('category')
@@ -262,7 +262,7 @@ class CategoryViewSet(viewsets.ViewSet):
         }, status=status.HTTP_201_CREATED)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def update(self, request, pk=None):
         try:
             category = Category.objects.get(pk=pk, is_active=True)
@@ -290,7 +290,7 @@ class CategoryViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             category = Category.objects.get(pk=pk, is_active=True)

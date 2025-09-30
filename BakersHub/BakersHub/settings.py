@@ -33,6 +33,8 @@ INSTALLED_APPS = [
     'Expense',
     'Analytics',
     'Notification',
+    'FrontEnd',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

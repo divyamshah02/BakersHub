@@ -34,8 +34,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         rep = super().to_representation(instance)
-        rep["delivery"] = instance.delivery.strftime("%Y-%m-%d %H:%M:%S") if instance.delivery else None
-        rep["created_at"] = instance.created_at.strftime("%Y-%m-%d %H:%M:%S") if instance.created_at else None
+        # rep["delivery"] = instance.delivery.strftime("%Y-%m-%d %H:%M:%S") if instance.delivery else None
+        # rep["created_at"] = instance.created_at.strftime("%Y-%m-%d %H:%M:%S") if instance.created_at else None
         return rep
 
 

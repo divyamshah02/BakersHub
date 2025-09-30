@@ -35,7 +35,7 @@ def handle_exceptions(view_func):
                     "success": False,
                     "user_not_logged_in": False,
                     "user_unauthorized": False,
-                    "session_info": session_info,
+                    # "session_info": session_info,
                     "data": None,
                     "error": str(ex)
                 },
@@ -66,7 +66,7 @@ def check_authentication(required_role=None):
                         "success": False,
                         "user_not_logged_in": True,
                         "user_unauthorized": False,
-                        "session_info": session_info,
+                        # "session_info": session_info,
                         "data": None,
                         "error": "User not authenticated"
                     }, status=status.HTTP_401_UNAUTHORIZED
