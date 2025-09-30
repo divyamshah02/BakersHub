@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 import random
 import string
 
@@ -6,14 +7,13 @@ def generate_order_id():
     while True:
         first_digit = random.choice(string.digits[1:])  
         remaining_digits = ''.join(random.choices(string.digits, k=9))
-        order_id = first_digit + remaining_digits
-
+        order_id = "OR" + first_digit + remaining_digits
         if not Order.objects.filter(order_id=order_id).exists():
             return order_id
 
 class Order(models.Model):
     user_id = models.CharField(max_length=12)
-    order_id = models.CharField(max_length=10, unique=True)
+    order_id = models.CharField(max_length=12, unique=True)
     customer_name = models.CharField(max_length=255)
     customer_number = models.CharField(max_length=15, null=True, blank=True)
     delivery = models.DateTimeField()
@@ -23,8 +23,8 @@ class Order(models.Model):
         choices=[('pending', 'Pending'), ('completed', 'Completed')], 
         default='pending'
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if not self.order_id:
@@ -42,8 +42,8 @@ class OrderItem(models.Model):
     quantity = models.IntegerField()
     unit = models.CharField(max_length=20)
     price = models.CharField(max_length=10)
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return f"{self.product} x{self.quantity}"
@@ -52,8 +52,8 @@ class OrderItem(models.Model):
 class Category(models.Model):
     user_id = models.CharField(max_length=12)
     category = models.CharField(max_length=255)
-    created_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=False)
+    created_at = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self):
         return self.category
