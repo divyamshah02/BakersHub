@@ -26,7 +26,6 @@ async function initOrders(user_id_param, csrf_token_param) {
 
 // Load Orders
 async function loadOrders() {
-  
   if (!userId) {
     showErrorMessage("User not logged in. Please log in.")
     return
@@ -37,6 +36,7 @@ async function loadOrders() {
   if (success && response.success) {
     ordersData = response.data
     renderOrders(ordersData)
+    updateTotalOrdersCount(ordersData.length)
   } else {
     showErrorMessage(response.error || "Failed to load orders")
   }
@@ -44,7 +44,6 @@ async function loadOrders() {
 
 // Load Categories
 async function loadCategories() {
-  
   if (!userId) return
 
   const [success, response] = await callApi("GET", `/order-api/category-api/?user_id=${userId}`, null, csrf_token)
@@ -58,6 +57,8 @@ async function loadCategories() {
 function renderOrders(orders) {
   const ordersGrid = document.getElementById("ordersGrid")
 
+  updateTotalOrdersCount(orders.length)
+
   if (!orders || orders.length === 0) {
     ordersGrid.innerHTML = `
       <div class="col-12 text-center py-5">
@@ -67,68 +68,98 @@ function renderOrders(orders) {
     `
     return
   }
-
+  const order_length = orders.length + 1
   ordersGrid.innerHTML = orders
-    .map((order) => {
-      // Calculate total amount from items
+    .map((order, index) => {
+      // Calculate total amount
       const totalAmount = order.items.reduce((sum, item) => sum + Number.parseFloat(item.price || 0), 0)
 
-      // Get items summary
-      const itemsSummary = order.items.map((item) => `${item.product} (${item.quantity} ${item.unit})`).join(", ")
+      // Items list
+      const itemsList = order.items
+        .map(
+          (item) => `
+        <div class="order-grid-item">
+          <div class="order-item-info">
+            <span class="order-item-name">
+              <b>${item.product}</b> 
+              <small class="text-muted">(${item.quantity} ${item.unit})</small>
+            </span>
+          </div>
+          <div class="order-item-price">₹${Number.parseFloat(item.price || 0).toFixed(2)}</div>
+        </div><hr class="my-1">
+      `,
+        )
+        .join("")
 
       return `
-        <div class="order-grid-card fade-in">
-          <div class="order-grid-header">
-            <div class="order-grid-number">#${order.order_id}</div>
-            <span class="badge bg-${getStatusColor(order.status)}">${capitalizeFirst(order.status)}</span>
-          </div>
-          <div class="order-grid-content">
-            <h5>${itemsSummary || "No items"}</h5>
-            <div class="order-grid-customer">
-              <i class="fas fa-user"></i>
-              ${order.customer_name}
-            </div>
-            ${
-              order.customer_number
-                ? `
-              <div class="order-grid-phone">
-                <i class="fas fa-phone"></i>
-                ${order.customer_number}
-              </div>
-            `
-                : ""
-            }
-            <div class="order-grid-due">
-              <i class="fas fa-calendar-alt"></i>
-              Due: ${formatDate(order.delivery)}
-            </div>
-            ${
-              order.extra_note
-                ? `
-              <div class="order-grid-notes">
-                <i class="fas fa-sticky-note"></i>
-                ${order.extra_note}
-              </div>
-            `
-                : ""
-            }
-          </div>
-          <div class="order-grid-footer">
-            <div class="order-grid-amount">$${totalAmount.toFixed(2)}</div>
-            <div class="order-actions">
-              <button class="btn btn-action btn-status" onclick="toggleOrderStatus(${order.id})" title="Toggle Status">
-                <i class="fas fa-check-circle"></i>
-              </button>
-              <button class="btn btn-action btn-edit" onclick="editOrder(${order.id})" title="Edit Order">
-                <i class="fas fa-edit"></i>
-              </button>
-              <button class="btn btn-action btn-delete" onclick="deleteOrder(${order.id})" title="Delete Order">
-                <i class="fas fa-trash"></i>
-              </button>
+      <div class="order-grid-card fade-in">
+
+        <!-- Header -->
+        <div class="order-grid-header">
+          <div class="order-grid-number">
+            ${orders.length - index}) ${order.customer_name}
+            <div class="order-total">
+              Total - <span class="order-grid-amount">₹${totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
-      `
+
+        <!-- Items -->
+        <div class="order-grid-items">
+          ${itemsList || "<em>No items</em>"}
+        </div>
+
+        <!-- Details -->
+        <div class="order-grid-details">
+          ${
+            order.customer_number
+              ? `<div class="order-grid-customer">
+                  <i class="fas fa-phone"></i>
+                  <a style="color: var(--golden-brown);" href="tel:${order.customer_number}">
+                    ${order.customer_number}
+                  </a>
+                </div>`
+              : ""
+          }
+
+          <div class="order-grid-due">
+            <i class="fas fa-calendar-alt"></i>
+            ${formatDate(order.delivery)}
+          </div>
+
+          ${
+            order.extra_note
+              ? `<div class="order-grid-note">
+                  <i class="fas fa-sticky-note"></i>
+                  ${order.extra_note}
+                </div>`
+              : ""
+          }
+        </div>
+
+        <!-- Footer -->
+        <div class="order-grid-footer">
+          <span class="badge bg-${getStatusColor(order.status)}">
+            ${capitalizeFirst(order.status)}
+          </span>
+          <div class="order-actions">
+        ${
+          order.status === "pending"
+            ? `<button class="btn-action btn-status" onclick="toggleOrderStatus(${order.id})" title="Toggle Status">
+       <i class="fas fa-check-circle"></i>
+     </button>`
+            : ""
+        }
+            <button class="btn-action btn-edit" onclick="editOrder(${order.id})" title="Edit Order">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="btn-action btn-delete" onclick="deleteOrder(${order.id})" title="Delete Order">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    `
     })
     .join("")
 }
@@ -295,7 +326,12 @@ async function toggleOrderStatus(orderId) {
 
   const newStatus = order.status === "pending" ? "completed" : "pending"
 
-  const [success, response] = await callApi("PATCH", `/order-api/order-api/${orderId}/`, { status: newStatus }, csrf_token)
+  const [success, response] = await callApi(
+    "PATCH",
+    `/order-api/order-api/${orderId}/`,
+    { status: newStatus },
+    csrf_token,
+  )
 
   if (success && response.success) {
     await loadOrders()
@@ -419,10 +455,12 @@ function removeOrderItem(button) {
 // Helper Functions
 function formatDate(dateString) {
   const date = new Date(dateString)
-  return date.toLocaleDateString("en-US", {
+  return date.toLocaleString("en-US", {
     year: "numeric",
     month: "short",
     day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
   })
 }
 
@@ -488,4 +526,24 @@ function showErrorMessage(message) {
       alert.remove()
     }
   }, 3000)
+}
+
+function toggleFilters() {
+  const filtersCard = document.getElementById("filtersCard")
+  const toggleBtn = document.getElementById("toggleFiltersBtn")
+
+  if (filtersCard.style.display === "none") {
+    filtersCard.style.display = "block"
+    toggleBtn.innerHTML = '<i class="fas fa-times"></i>'
+  } else {
+    filtersCard.style.display = "none"
+    toggleBtn.innerHTML = '<i class="fas fa-filter"></i>'
+  }
+}
+
+function updateTotalOrdersCount(count) {
+  const totalOrdersCount = document.getElementById("totalOrdersCount")
+  if (totalOrdersCount) {
+    totalOrdersCount.textContent = count
+  }
 }

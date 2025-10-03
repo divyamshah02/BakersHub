@@ -407,9 +407,9 @@ body {
 
 /* Page Headers */
 .page-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
+  /* display: flex; */
+  /* justify-content: space-between;
+  align-items: flex-start; */
   margin-bottom: 2rem;
   gap: 1rem;
 }
@@ -420,6 +420,7 @@ body {
   font-weight: 600;
   color: var(--text-primary);
   margin-bottom: 0.5rem;
+  margin-top: 1rem;
 }
 
 .page-subtitle {
@@ -469,6 +470,7 @@ body {
   transform: translateX(-50%);
   width: 60px;
   height: 3px;
+  /* background: linear-gradient(135deg, var(--lavender) 0%, #a89bb5 100%); */
   background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%);
   border-radius: 2px;
 }
@@ -900,108 +902,27 @@ body {
   box-shadow: var(--shadow-soft);
 }
 
-/* Beautiful Order Cards */
-.order-cards-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
+/* ===============================
+   ORDER CARDS - CLEAN + UPDATED
+   =============================== */
 
-.order-card {
-  background: var(--surface);
-  border-radius: var(--radius-small);
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-}
-
-.order-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 100%);
-}
-
-.order-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-medium);
-  border-color: var(--accent);
-}
-
-.order-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.order-number {
-  font-family: "Playfair Display", serif;
-  font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--primary);
-}
-
-.order-details h6 {
-  font-family: "Playfair Display", serif;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-}
-
-.customer-name {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.customer-name i {
-  color: var(--accent);
-}
-
-.order-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.order-amount {
-  font-family: "Playfair Display", serif;
-  font-weight: 600;
-  font-size: 1.25rem;
-  color: var(--primary);
-}
-
-.order-date {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-}
-
-/* Orders Grid Layout */
+/* Grid Container */
 .orders-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 1.5rem;
 }
 
+/* Card */
 .order-grid-card {
   background: var(--surface);
   border-radius: var(--radius);
-  padding: 2rem;
+  padding: 1.5rem;
   box-shadow: var(--shadow-soft);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid var(--border);
   position: relative;
   overflow: hidden;
-  border: 1px solid var(--border);
+  transition: all 0.3s ease;
 }
 
 .order-grid-card::before {
@@ -1011,19 +932,25 @@ body {
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 50%, var(--primary-soft) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--accent) 0%,
+    var(--accent-soft) 50%,
+    var(--primary-soft) 100%
+  );
 }
 
 .order-grid-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
   box-shadow: var(--shadow-strong);
 }
 
+/* Header */
 .order-grid-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 .order-grid-number {
@@ -1031,73 +958,123 @@ body {
   font-weight: 700;
   font-size: 1.5rem;
   color: var(--primary);
+  line-height: 1.3;
 }
 
-.order-grid-content h5 {
+/* Total below name */
+.order-total {
+  margin-top: 0.3rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding-left: calc(2ch + 0.5rem); /* aligns under the name, skips "#3) " */
+}
+
+.order-grid-amount {
   font-family: "Playfair Display", serif;
   font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.75rem;
-  font-size: 1.25rem;
+  font-size: 1.1rem;
+  color: var(--primary);
 }
 
-.order-grid-customer {
-  color: var(--text-secondary);
+/* Items List */
+.order-grid-items {
+  margin-bottom: 1rem;
+}
+
+.order-grid-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 0.4rem 0;
+  border-bottom: 1px dashed var(--border);
+}
+
+.order-grid-item:last-child {
+  border-bottom: none;
+}
+
+.order-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.order-item-name {
+  display: block;
   font-weight: 500;
-  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  word-break: break-word; /* handles long product names */
+}
+
+.order-item-price {
+  margin-left: 1rem;
+  font-weight: 600;
+  color: var(--primary);
+  white-space: nowrap;
+  font-size: 0.95rem;
+}
+
+/* Details */
+.order-grid-details {
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.order-grid-details > div {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
+  margin: 0.3rem 0;
 }
 
 .order-grid-customer i {
   color: var(--accent);
 }
 
-.order-grid-due {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .order-grid-due i {
   color: var(--warning);
 }
 
+/* Notes */
+.order-grid-note {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  display: flex;
+  align-items: flex-start; /* ✅ align icon to top */
+  gap: 0.5rem;
+  font-style: italic;
+}
+
+/* Footer */
 .order-grid-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding-top: 1rem;
+  padding-top: 0.8rem;
   border-top: 1px solid var(--border);
-}
-
-.order-grid-amount {
-  font-family: "Playfair Display", serif;
-  font-weight: 700;
-  font-size: 1.5rem;
-  color: var(--primary);
 }
 
 .order-actions {
   display: flex;
-  gap: 0.5rem;
+  gap: 0.6rem;
 }
 
 .btn-action {
   padding: 0.5rem;
   border-radius: 50%;
   border: none;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 2.3rem;
+  height: 2.3rem;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
   font-size: 0.9rem;
+}
+
+.btn-status {
+  background: var(--sage-green);
+  color: white;
 }
 
 .btn-edit {
@@ -1533,6 +1510,8 @@ body {
   }
 
   .page-header {
+    display: flex;
+    justify-content: space-between;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
@@ -1608,17 +1587,17 @@ body {
     gap: 0.75rem;
   }
 
-  .order-grid-footer {
+  /* .order-grid-footer {
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
-  }
+  } */
 
-  .order-actions {
+  /* .order-actions {
     align-self: flex-end;
     width: 100%;
     justify-content: space-between;
-  }
+  } */
 
   .modal-dialog {
     margin: 1rem;
@@ -2010,3 +1989,4 @@ body {
     justify-content: center;
   }
 }
+
