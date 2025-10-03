@@ -1,8 +1,15 @@
 // Orders Data
 let ordersData = []
 let categoriesData = []
-let userId = null
+
+let order_url = null
+let category_url = null
+let user_profile_url = null
 let csrf_token = null
+let userId = null
+
+let displayedOrdersCount = 0
+const ORDERS_PER_PAGE = 3 // Change this value to load different number of orders (e.g., 5, 10, 50)
 
 // Utility Functions
 function getUserId() {
@@ -14,14 +21,32 @@ function getUserId() {
 const bootstrap = window.bootstrap
 
 // Initialize Orders Page
-async function initOrders(user_id_param, csrf_token_param) {
-  userId = user_id_param
+async function initOrders(order_url_param, category_url_param, user_profile_url_param, csrf_token_param, user_id_param=null) {
+  order_url = order_url_param
+  category_url = category_url_param
+  user_profile_url = user_profile_url_param
   csrf_token = csrf_token_param
+  if (user_id_param == null) {
+    await getUserInfo()
+  }
+  else {
+    userId = user_id_param
+  }
   await loadCategories()
   await loadOrders()
   setupFilters()
   setupFAB()
   setupMobileNotification()
+}
+
+async function getUserInfo() {
+  const [success, response] = await callApi("GET", `${user_profile_url}`, null, csrf_token)
+  if (success && response.success) {
+    userData = response.data
+    userId = userData.user.user_id
+  } else {
+    showErrorMessage(response.error || "Failed to user info")
+  }
 }
 
 // Load Orders
@@ -31,11 +56,20 @@ async function loadOrders() {
     return
   }
 
-  const [success, response] = await callApi("GET", `/order-api/order-api/?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${order_url}?user_id=${userId}`, null, csrf_token)
 
   if (success && response.success) {
     ordersData = response.data
-    renderOrders(ordersData)
+    // displayedOrdersCount = 0 // Reset displayed count
+    const ordersGrid = document.getElementById("ordersGrid")
+    ordersGrid.innerHTML = ""
+    if (displayedOrdersCount > ORDERS_PER_PAGE) {
+      renderOrders(ordersData.slice(0, displayedOrdersCount))
+    } else {
+      renderOrders(ordersData.slice(0, ORDERS_PER_PAGE))
+      displayedOrdersCount = Math.min(ORDERS_PER_PAGE, ordersData.length)
+    }
+    updateLoadMoreButton()
     updateTotalOrdersCount(ordersData.length)
   } else {
     showErrorMessage(response.error || "Failed to load orders")
@@ -46,7 +80,7 @@ async function loadOrders() {
 async function loadCategories() {
   if (!userId) return
 
-  const [success, response] = await callApi("GET", `/order-api/category-api/?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${category_url}?user_id=${userId}`, null, csrf_token)
 
   if (success && response.success) {
     categoriesData = response.data
@@ -57,7 +91,7 @@ async function loadCategories() {
 function renderOrders(orders) {
   const ordersGrid = document.getElementById("ordersGrid")
 
-  updateTotalOrdersCount(orders.length)
+  updateTotalOrdersCount(ordersData.length)
 
   if (!orders || orders.length === 0) {
     ordersGrid.innerHTML = `
@@ -68,8 +102,12 @@ function renderOrders(orders) {
     `
     return
   }
-  const order_length = orders.length + 1
-  ordersGrid.innerHTML = orders
+
+  // if (displayedOrdersCount <= ORDERS_PER_PAGE) {
+  //   ordersGrid.innerHTML = ""
+  // }
+
+  const orderCards = orders
     .map((order, index) => {
       // Calculate total amount
       const totalAmount = order.items.reduce((sum, item) => sum + Number.parseFloat(item.price || 0), 0)
@@ -91,25 +129,22 @@ function renderOrders(orders) {
         )
         .join("")
 
+      const orderIndex = ordersData.findIndex((o) => o.id === order.id)
       return `
-      <div class="order-grid-card fade-in">
-
-        <!-- Header -->
+      <div class="order-grid-card">
         <div class="order-grid-header">
           <div class="order-grid-number">
-            ${orders.length - index}) ${order.customer_name}
+            ${ordersData.length - orderIndex}) ${order.customer_name}
             <div class="order-total">
               Total - <span class="order-grid-amount">₹${totalAmount.toFixed(2)}</span>
             </div>
           </div>
         </div>
 
-        <!-- Items -->
         <div class="order-grid-items">
           ${itemsList || "<em>No items</em>"}
         </div>
 
-        <!-- Details -->
         <div class="order-grid-details">
           ${
             order.customer_number
@@ -137,9 +172,8 @@ function renderOrders(orders) {
           }
         </div>
 
-        <!-- Footer -->
         <div class="order-grid-footer">
-          <span class="badge bg-${getStatusColor(order.status)}">
+          <span class="badge bg-${getStatusColor(order.status)}" id="status-badge-${order.id}">
             ${capitalizeFirst(order.status)}
           </span>
           <div class="order-actions">
@@ -162,6 +196,8 @@ function renderOrders(orders) {
     `
     })
     .join("")
+
+  ordersGrid.innerHTML += orderCards
 }
 
 // Add Order
@@ -207,7 +243,7 @@ async function addOrder() {
     items: items,
   }
 
-  const [success, response] = await callApi("POST", "/order-api/order-api/", orderData, csrf_token)
+  const [success, response] = await callApi("POST", "${order_url}", orderData, csrf_token)
 
   if (success && response.success) {
     await loadOrders()
@@ -262,10 +298,29 @@ async function editOrder(orderId) {
   // Populate edit modal with order data
   document.getElementById("editCustomerName").value = order.customer_name
   document.getElementById("editCustomerPhone").value = order.customer_number || ""
-  document.getElementById("editDueDate").value = order.delivery.split(" ")[0]
+
+  // Format datetime for datetime-local input
+  const deliveryDate = new Date(order.delivery)
+  const formattedDate = deliveryDate.toISOString().slice(0, 16)
+  document.getElementById("editDueDate").value = formattedDate
+
   document.getElementById("editOrderNotes").value = order.extra_note || ""
   document.getElementById("editOrderStatus").value = order.status
   document.getElementById("editOrderId").value = order.id
+
+  const itemsContainer = document.getElementById("editOrderItemsContainer")
+  itemsContainer.innerHTML = ""
+
+  if (order.items && order.items.length > 0) {
+    order.items.forEach((item, index) => {
+      const itemRow = createEditOrderItemRow(item, index)
+      itemsContainer.appendChild(itemRow)
+    })
+  } else {
+    // Add one empty row if no items
+    const itemRow = createEditOrderItemRow()
+    itemsContainer.appendChild(itemRow)
+  }
 
   // Show edit modal
   const editModal = new bootstrap.Modal(document.getElementById("editOrderModal"))
@@ -281,15 +336,47 @@ async function saveOrderEdit() {
   const orderNotes = document.getElementById("editOrderNotes").value
   const status = document.getElementById("editOrderStatus").value
 
+  // Get order items from edit form
+  const items = []
+  const itemRows = document.querySelectorAll("#editOrderItemsContainer .order-item-row")
+
+  itemRows.forEach((row) => {
+    const product = row.querySelector(".item-product").value
+    const item_id = row.querySelector(".item-id").value
+    const is_active = row.querySelector(".item-is_active").value
+    const category = row.querySelector(".item-category").value
+    const quantity = row.querySelector(".item-quantity").value
+    const unit = row.querySelector(".item-unit").value
+    const price = row.querySelector(".item-price").value
+
+    if (product && quantity && price) {
+      items.push({
+        item_id,
+        is_active,
+        product,
+        category,
+        quantity: Number.parseInt(quantity),
+        unit,
+        price,
+      })
+    }
+  })
+
+  if (!customerName || !dueDate || items.length === 0) {
+    showErrorMessage("Please fill in all required fields and add at least one item")
+    return
+  }
+
   const orderData = {
     customer_name: customerName,
     customer_number: customerPhone,
     delivery: dueDate,
     extra_note: orderNotes,
     status: status,
+    items: items,
   }
 
-  const [success, response] = await callApi("PUT", `/order-api/order-api/${orderId}/`, orderData, csrf_token)
+  const [success, response] = await callApi("PUT", `${order_url}${orderId}/`, orderData, csrf_token)
 
   if (success && response.success) {
     await loadOrders()
@@ -309,7 +396,7 @@ async function deleteOrder(orderId) {
     return
   }
 
-  const [success, response] = await callApi("DELETE", `/order-api/order-api/${orderId}/`, null, csrf_token)
+  const [success, response] = await callApi("DELETE", `${order_url}${orderId}/`, null, csrf_token)
 
   if (success && response.success) {
     await loadOrders()
@@ -328,13 +415,17 @@ async function toggleOrderStatus(orderId) {
 
   const [success, response] = await callApi(
     "PATCH",
-    `/order-api/order-api/${orderId}/`,
+    `${order_url}${orderId}/`,
     { status: newStatus },
     csrf_token,
   )
 
   if (success && response.success) {
-    await loadOrders()
+    // await loadOrders()
+    let status_badge = document.getElementById(`status-badge-${orderId}`)
+    status_badge.className = `badge bg-${getStatusColor(newStatus)}`
+    status_badge.innerHTML = `${capitalizeFirst(newStatus)}`
+    ordersData.find(o => o.id == orderId).status = newStatus;
     showSuccessMessage(`Order status updated to ${newStatus}!`)
   } else {
     showErrorMessage(response.error || "Failed to update order status")
@@ -371,13 +462,26 @@ function filterOrders() {
 
     const matchesStatus = !statusFilter || order.status === statusFilter
 
-    const orderDate = order.delivery.split(" ")[0]
+    // order.delivery = "2025-09-30T22:53:00+05:30"
+    // const orderDate = order.delivery.split(" ")[0]
+    const orderDate = new Date(order.delivery).toLocaleDateString("en-CA");
+    // dateFilter = "2025-10-04"
     const matchesDate = !dateFilter || orderDate === dateFilter
 
     return matchesSearch && matchesStatus && matchesDate
   })
 
-  renderOrders(filtered)
+  displayedOrdersCount = 0
+  const ordersGrid = document.getElementById("ordersGrid")
+  ordersGrid.innerHTML = ""
+  renderOrders(filtered.slice(0, ORDERS_PER_PAGE))
+  displayedOrdersCount = Math.min(ORDERS_PER_PAGE, filtered.length)
+
+  // Update ordersData temporarily for pagination
+  const originalData = ordersData
+  ordersData = filtered
+  updateLoadMoreButton()
+  ordersData = originalData
 }
 
 // Setup FAB
@@ -415,29 +519,48 @@ function addOrderItem() {
   const container = document.getElementById("orderItemsContainer")
   const newRow = document.createElement("div")
   newRow.className = "order-item-row mb-2 p-3 border rounded"
+  let total_rows = document.querySelectorAll('.order-item-row').length
   newRow.innerHTML = `
     <div class="row g-2">
       <div class="col-12 col-md-3">
-        <input type="text" class="form-control item-product" placeholder="Product" required>
+          <label class="form-label" style="font-size: 12px;">${total_rows+1}) Product Name</label>
+          <input type="text" class="form-control item-product" placeholder="Product" required>
       </div>
       <div class="col-6 col-md-2">
-        <input type="text" class="form-control item-category" placeholder="Category">
+          <label class="form-label" style="font-size: 12px;">Category</label>
+          <input type="text" class="form-control item-category" placeholder="Category">
       </div>
       <div class="col-6 col-md-2">
-        <input type="number" class="form-control item-quantity" placeholder="Qty" required>
+          <label class="form-label" style="font-size: 12px;">Quantity</label>                                            
+          <input type="number" class="form-control item-quantity" placeholder="Qty" required>
       </div>
       <div class="col-6 col-md-2">
-        <input type="text" class="form-control item-unit" placeholder="Unit" value="pcs">
+          <label class="form-label" style="font-size: 12px;">Unit</label>
+          <select class="form-control item-unit">
+              <option value="pcs" selected>Pcs</option>
+              <option value="Kg">Kg</option>
+              <option value="Gram">Gram</option>
+              <option value="MG">MG</option>
+              <option value="Piece">Piece</option>                                                
+              <option value="Pound">Pound</option>
+              <option value="Ounce">Ounce</option>
+              <option value="Litre">Litre</option>
+              <option value="ML">ML</option>
+              <option value="Dozen">Dozen</option>
+              <option value="Pack">Pack</option>
+              <option value="Box">Box</option>
+          </select>
       </div>
       <div class="col-6 col-md-2">
-        <input type="number" class="form-control item-price" placeholder="Price" step="0.01" required>
+          <label class="form-label" style="font-size: 12px;">Price</label>
+          <input type="number" class="form-control item-price" placeholder="Price" step="0.01" required>
       </div>
       <div class="col-12 col-md-1">
-        <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeOrderItem(this)">
-          <i class="fas fa-trash"></i>
-        </button>
+          <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeOrderItem(this)">
+              <i class="fas fa-trash"></i>
+          </button>
       </div>
-    </div>
+  </div>
   `
   container.appendChild(newRow)
 }
@@ -449,6 +572,101 @@ function removeOrderItem(button) {
     button.closest(".order-item-row").remove()
   } else {
     showErrorMessage("At least one item is required")
+  }
+}
+
+function createEditOrderItemRow(item = null, index = null) {
+  const newRow = document.createElement("div")
+  newRow.className = "order-item-row mb-2 p-3 border rounded"
+  if (index == null) {
+    index = document.querySelectorAll('.order-item-row').length - 1
+  }
+  newRow.innerHTML = `
+    <div class="row g-2">
+      <div class="col-12 col-md-3">
+        <label class="form-label" style="font-size: 12px;">${index+1}) Product Name</label>
+        <input type="text" class="form-control item-product" placeholder="Product" value="${item?.product || ""}" required>
+        <input type="hidden" class="item-id" value="${item?.id || ""}" required>
+        <input type="hidden" class="item-is_active" value="${item?.is_active == null ? 'true' : item.is_active}" required>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label" style="font-size: 12px;">Category</label>
+        <input type="text" class="form-control item-category" placeholder="Category" value="${item?.category || ""}">
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label" style="font-size: 12px;">Quantity</label>                                            
+        <input type="number" class="form-control item-quantity" placeholder="Qty" value="${item?.quantity || ""}" required>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label" style="font-size: 12px;">Unit</label>
+        <select class="form-control item-unit">
+          <option value="pcs" ${item?.unit === "pcs" ? "selected" : ""}>Pcs</option>
+          <option value="Kg" ${item?.unit === "Kg" ? "selected" : ""}>Kg</option>
+          <option value="Gram" ${item?.unit === "Gram" ? "selected" : ""}>Gram</option>
+          <option value="MG" ${item?.unit === "MG" ? "selected" : ""}>MG</option>
+          <option value="Piece" ${item?.unit === "Piece" ? "selected" : ""}>Piece</option>
+          <option value="Pound" ${item?.unit === "Pound" ? "selected" : ""}>Pound</option>
+          <option value="Ounce" ${item?.unit === "Ounce" ? "selected" : ""}>Ounce</option>
+          <option value="Litre" ${item?.unit === "Litre" ? "selected" : ""}>Litre</option>
+          <option value="ML" ${item?.unit === "ML" ? "selected" : ""}>ML</option>
+          <option value="Dozen" ${item?.unit === "Dozen" ? "selected" : ""}>Dozen</option>
+          <option value="Pack" ${item?.unit === "Pack" ? "selected" : ""}>Pack</option>
+          <option value="Box" ${item?.unit === "Box" ? "selected" : ""}>Box</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label" style="font-size: 12px;">Price</label>
+        <input type="number" class="form-control item-price" placeholder="Price" step="0.01" value="${item?.price || ""}" required>
+      </div>
+      <div class="col-12 col-md-1">
+        <button type="button" class="btn btn-danger btn-sm w-100" onclick="removeEditOrderItem(this)">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  `
+  return newRow
+}
+
+function addEditOrderItem() {
+  const container = document.getElementById("editOrderItemsContainer")
+  const newRow = createEditOrderItemRow()
+  container.appendChild(newRow)
+}
+
+function removeEditOrderItem(button) {
+  const container = document.getElementById("editOrderItemsContainer")
+  if (container.children.length > 1) {
+    // button.closest(".order-item-row").remove()
+
+    const row = button.closest(".order-item-row"); // Find the row of the clicked delete button
+    const isActiveInput = row.querySelector(".item-is_active"); // Get the is_active input for this row
+
+    // Set is_active to false
+    isActiveInput.value = "false"; 
+
+    // Hide the row instead of removing it
+    row.style.display = "none";
+
+  } else {
+    showErrorMessage("At least one item is required")
+  }
+}
+
+
+function loadMoreOrders() {
+  const nextBatch = ordersData.slice(displayedOrdersCount, displayedOrdersCount + ORDERS_PER_PAGE)
+  renderOrders(nextBatch)
+  displayedOrdersCount += ORDERS_PER_PAGE
+  updateLoadMoreButton()
+}
+
+function updateLoadMoreButton() {
+  const loadMoreContainer = document.getElementById("loadMoreContainer")
+  if (displayedOrdersCount < ordersData.length) {
+    loadMoreContainer.style.display = "block"
+  } else {
+    loadMoreContainer.style.display = "none"
   }
 }
 

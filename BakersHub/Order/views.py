@@ -135,12 +135,54 @@ class OrderViewSet(viewsets.ViewSet):
             }, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
+        user_id = request.user.user_id
+        
         order.customer_name = data.get('customer_name', order.customer_name)
         order.customer_number = data.get('customer_number', order.customer_number)
         order.delivery = data.get('delivery', order.delivery)
         order.extra_note = data.get('extra_note', order.extra_note)
         order.status = data.get('status', order.status)
         order.save()
+
+        items = data.get('items', None)
+        if items is not None:
+            # Soft delete existing items
+            order.items.update(is_active=False)
+            
+            # Create new items
+            for item in items:
+                item_id = item.get('item_id')
+                is_active = item.get('is_active')                
+                if is_active == 'true':
+                    is_active=True
+                else:
+                    is_active = False
+                product = item.get('product')
+                category_name = item.get('category')
+                quantity = item.get('quantity')
+                unit = item.get('unit')
+                price = item.get('price')
+
+                # Check / create category for user
+                if category_name:
+                    category_obj, _ = Category.objects.get_or_create(
+                        user_id=user_id,
+                        category=category_name,
+                        defaults={"is_active": True}
+                    )
+                if item_id == '':
+                    order_item_edit = OrderItem(order=order)
+                else:
+                    order_item_edit = OrderItem.objects.get(id=item_id)
+            
+                order_item_edit.product = product
+                order_item_edit.category = category_name
+                order_item_edit.quantity = quantity
+                order_item_edit.unit = unit
+                order_item_edit.price = price
+                order_item_edit.is_active = is_active
+
+                order_item_edit.save()
 
         serializer = OrderSerializer(order)
         return Response({
@@ -313,4 +355,3 @@ class CategoryViewSet(viewsets.ViewSet):
             "data": f"Category {category.category} deleted successfully.",
             "error": None
         }, status=status.HTTP_200_OK)
-

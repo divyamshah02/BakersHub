@@ -1,5 +1,5 @@
 async function callApi(method, url, bodyData = null, csrfToken = '', media_upload=false) {
-    toggle_loader()
+    // toggle_loader()
     try {
         // Validate method and URL
         if (typeof method !== 'string' || typeof url !== 'string') {
@@ -48,7 +48,7 @@ async function callApi(method, url, bodyData = null, csrfToken = '', media_uploa
 
         try {
             const data = await response.json();
-            toggle_loader()
+            // toggle_loader()
             return [true, data];
         }
         catch(error) {
@@ -64,7 +64,7 @@ async function callApi(method, url, bodyData = null, csrfToken = '', media_uploa
     } catch (error) {
         // Log and return failure flag with error
         console.error("API Call Error:", error);
-        toggle_loader()
+        // toggle_loader()
         return [false, error.message || "An unknown error occurred"];
     }
 }
@@ -107,7 +107,7 @@ async function exampleApiCallerGET() {
     }
 }
 
-function toggle_loader_working() {
+function toggle_loader() {
     let existingLoader = document.getElementById('dynamic-page-loader');
 
     if (existingLoader) {
@@ -133,7 +133,7 @@ function toggle_loader_working() {
         spinner.style.width = '3rem';
         spinner.style.height = '3rem';
         spinner.style.border = '6px solid #ccc';
-        spinner.style.borderTop = '6px solid #1e40af';
+        spinner.style.borderTop = '6px solid #8b6f47';
         spinner.style.borderRadius = '50%';
         spinner.style.animation = 'spin 1s linear infinite';
 
@@ -155,6 +155,6 @@ function toggle_loader_working() {
     }
 }
 
-function toggle_loader() {
-   console.log('loaded')
-}
+// function toggle_loader() {
+//    console.log('loaded')
+// }

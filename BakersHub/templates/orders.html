@@ -8,7 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/styles.css" rel="stylesheet">
 </head>
-<body onload="initOrders('{{user.user_id}}', '{{csrf_token}}')">
+<body>
     <nav class="navbar navbar-expand-lg fixed-top d-none d-lg-flex">
         <div class="container-fluid">
             <a class="navbar-brand" href="dashboard.html">
@@ -122,9 +122,7 @@
                         <select class="form-select" id="statusFilter">
                             <option value="">All Status</option>
                             <option value="pending">Pending</option>
-                            <option value="in-progress">In Progress</option>
                             <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
                         </select>
                     </div>
                     <div class="col-6 col-md-3">
@@ -141,6 +139,13 @@
 
             <div class="orders-grid" id="ordersGrid">
                 <!-- Orders will be populated by JavaScript -->
+            </div>
+
+            <!-- Added Load More button -->
+            <div class="text-center mt-4" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-outline-primary" onclick="loadMoreOrders()">
+                    <i class="fas fa-chevron-down me-2"></i>Load More
+                </button>
             </div>
         </div>
     </main>
@@ -178,18 +183,36 @@
                                     <div class="order-item-row mb-2 p-3 border rounded">
                                         <div class="row g-2">
                                             <div class="col-12 col-md-3">
+                                                <label class="form-label" style="font-size: 12px;">1) Product Name</label>
                                                 <input type="text" class="form-control item-product" placeholder="Product" required>
                                             </div>
                                             <div class="col-6 col-md-2">
+                                                <label class="form-label" style="font-size: 12px;">Category</label>
                                                 <input type="text" class="form-control item-category" placeholder="Category">
                                             </div>
                                             <div class="col-6 col-md-2">
+                                                <label class="form-label" style="font-size: 12px;">Quantity</label>                                            
                                                 <input type="number" class="form-control item-quantity" placeholder="Qty" required>
                                             </div>
                                             <div class="col-6 col-md-2">
-                                                <input type="text" class="form-control item-unit" placeholder="Unit" value="pcs">
+                                                <label class="form-label" style="font-size: 12px;">Unit</label>
+                                                <select class="form-control item-unit">
+                                                    <option value="pcs" selected>Pcs</option>
+                                                    <option value="Kg">Kg</option>
+                                                    <option value="Gram">Gram</option>
+                                                    <option value="MG">MG</option>
+                                                    <option value="Piece">Piece</option>                                                
+                                                    <option value="Pound">Pound</option>
+                                                    <option value="Ounce">Ounce</option>
+                                                    <option value="Litre">Litre</option>
+                                                    <option value="ML">ML</option>
+                                                    <option value="Dozen">Dozen</option>
+                                                    <option value="Pack">Pack</option>
+                                                    <option value="Box">Box</option>
+                                                </select>
                                             </div>
                                             <div class="col-6 col-md-2">
+                                                <label class="form-label" style="font-size: 12px;">Price</label>
                                                 <input type="number" class="form-control item-price" placeholder="Price" step="0.01" required>
                                             </div>
                                             <div class="col-12 col-md-1">
@@ -215,6 +238,7 @@
         </div>
     </div>
 
+    <!-- Updated Edit Order Modal to include items -->
     <div class="modal fade" id="editOrderModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -236,7 +260,7 @@
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Due Date</label>
-                                <input type="date" class="form-control" id="editDueDate" required>
+                                <input type="datetime-local" class="form-control" id="editDueDate" required>
                             </div>
                             <div class="col-12 col-md-6">
                                 <label class="form-label">Status</label>
@@ -250,6 +274,15 @@
                             <div class="col-12">
                                 <label class="form-label">Notes</label>
                                 <textarea class="form-control" rows="2" id="editOrderNotes" placeholder="Special instructions or notes"></textarea>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Order Items</label>
+                                <div id="editOrderItemsContainer">
+                                    <!-- Items will be populated by JavaScript -->
+                                </div>
+                                <button type="button" class="btn btn-outline-primary btn-sm mt-2" onclick="addEditOrderItem()">
+                                    <i class="fas fa-plus me-1"></i>Add Item
+                                </button>
                             </div>
                         </div>
                     </form>
@@ -265,5 +298,13 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/api_caller.js"></script>
     <script src="/static/js/orders.js"></script>
+
+    <script>
+        window.onload = async function () {
+            toggle_loader()
+            await initOrders("{% url 'order-api-list' %}", "{% url 'category-api-list' %}", "{% url 'user-profile-api-list' %}", "{{csrf_token}}", "{{user.user_id}}")
+            toggle_loader()
+        }
+    </script>
 </body>
 </html>

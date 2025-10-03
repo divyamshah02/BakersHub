@@ -23,7 +23,7 @@ from utils.decorators import *
 class TempViewSet(viewsets.ViewSet):
     
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         any_get_data = request.query_params.get('any_get_data')
         if not any_get_data:
@@ -216,7 +216,7 @@ class OtpAuthViewSet(viewsets.ViewSet):
 class IsUserLoggedInViewSet(viewsets.ViewSet):
     
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user = request.user
         userData = User.objects.filter(user_id=user.user_id).first()
@@ -267,7 +267,7 @@ class UserDetailViewSet(viewsets.ViewSet):
 class UserProfileViewSet(viewsets.ViewSet):
     
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user_id = request.user.user_id
         
@@ -293,7 +293,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             }, status=404)
 
     @handle_exceptions
-    # @check_authentication(required_role="customer")
+    # @check_authentication()(required_role="customer")
     def update(self, request, pk=None):
         """
         Update user profile information
