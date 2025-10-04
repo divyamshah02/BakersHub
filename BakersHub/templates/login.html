@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bakers Hub - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/css/styles.css" rel="stylesheet">
+    <style>
+        /* Additional styles for login page */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--cream) 0%, var(--soft-pink) 100%);
+            padding: 2rem 1rem;
+        }
+
+        .login-card {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 3rem 2.5rem;
+            box-shadow: var(--shadow-strong);
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-soft) 50%, var(--primary-soft) 100%);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        .login-logo {
+            font-size: 3rem;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .login-title {
+            font-family: "Playfair Display", serif;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .phone-input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .phone-prefix {
+            position: absolute;
+            left: 1.25rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-weight: 600;
+            z-index: 1;
+        }
+
+        .phone-input {
+            padding-left: 3.5rem !important;
+        }
+
+        .otp-container {
+            display: none;
+            animation: fadeInUp 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .otp-container.active {
+            display: block;
+        }
+
+        .otp-inputs {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            margin: 2rem 0;
+        }
+
+        .otp-input {
+            width: 3.5rem;
+            height: 3.5rem;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-small);
+            background: var(--surface);
+            color: var(--text-primary);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .otp-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.25rem rgba(139, 111, 71, 0.15);
+            transform: scale(1.05);
+        }
+
+        .otp-input.filled {
+            background: var(--surface-soft);
+            border-color: var(--primary);
+        }
+
+        .resend-otp {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .resend-link {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .resend-link:hover {
+            color: var(--primary-soft);
+            text-decoration: underline;
+        }
+
+        .resend-link.disabled {
+            color: var(--text-muted);
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            margin-bottom: 1.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .back-button:hover {
+            color: var(--primary);
+        }
+
+        .error-message {
+            background: #fee;
+            border: 1px solid #fcc;
+            color: #c33;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-small);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #efe;
+            border: 1px solid #cfc;
+            color: #3a3;
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius-small);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+            display: none;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .loader {
+            display: inline-block;
+            width: 1rem;
+            height: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .btn-loading {
+            position: relative;
+            pointer-events: none;
+        }
+
+        .btn-loading .btn-text {
+            opacity: 0;
+        }
+
+        .btn-loading .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .login-title {
+                font-size: 1.75rem;
+            }
+
+            .otp-input {
+                width: 2.75rem;
+                height: 2.75rem;
+                font-size: 1.25rem;
+            }
+
+            .otp-inputs {
+                gap: 0.5rem;
+            }
+        }
+
+        /* Added better styling for OTP header section with phone number display */
+        .otp-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: var(--surface-soft);
+            border-radius: var(--radius-small);
+        }
+
+        .otp-header p {
+            margin: 0;
+        }
+
+        .otp-header .text-muted {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .otp-header .phone-display {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 0.5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-logo">
+                    <i class="fas fa-cookie-bite"></i>
+                </div>
+                <h1 class="login-title">Welcome to Bakers Hub</h1>
+                <p class="login-subtitle">Sign in to manage your bakery</p>
+            </div>
+
+            <div id="errorMessage" class="error-message"></div>
+            <div id="successMessage" class="success-message"></div>
+
+            <!-- Phone Number Input Section -->
+            <div id="phoneSection">
+                <form id="phoneForm">
+                    <div class="phone-input-group">
+                        <label class="form-label">Mobile Number</label>
+                        <span class="phone-prefix">+91</span>
+                        <input 
+                            type="tel" 
+                            class="form-control phone-input" 
+                            id="mobileNumber" 
+                            placeholder="Enter your mobile number"
+                            maxlength="10"
+                            pattern="[0-9]{10}"
+                            required
+                        >
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100" id="sendOtpBtn">
+                        <span class="btn-text">Send OTP</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- OTP Verification Section -->
+            <div id="otpSection" class="otp-container">
+                <a href="#" class="back-button" id="backToPhone">
+                    <i class="fas fa-arrow-left"></i>
+                    Change Number
+                </a>
+                
+                <!-- Improved OTP header section with better phone number display -->
+                <div class="otp-header">
+                    <p class="text-muted">Enter the 6-digit OTP sent to</p>
+                    <p class="phone-display" id="displayMobile"></p>
+                </div>
+
+                <form id="otpForm">
+                    <div class="otp-inputs">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="0">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="1">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="2">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="3">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="4">
+                        <input type="text" class="otp-input" maxlength="1" pattern="[0-9]" inputmode="numeric" data-index="5">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100" id="verifyOtpBtn">
+                        <span class="btn-text">Verify OTP</span>
+                    </button>
+                </form>
+
+                <div class="resend-otp">
+                    Didn't receive OTP? 
+                    <a class="resend-link" id="resendOtpLink">Resend OTP</a>
+                    <span id="resendTimer" style="display: none;"> in <span id="timerCount">30</span>s</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/api_caller.js"></script>
+    <script src="/static/js/login.js"></script>
+
+    <script>
+        window.onload = async function () {
+            await initLogin("{% url 'otp-api-list' %}", "{{csrf_token}}")
+        }
+    </script>
+</body>
+</html>

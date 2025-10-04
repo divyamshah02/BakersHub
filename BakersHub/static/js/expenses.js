@@ -176,7 +176,7 @@ function renderExpenses(expenses) {
           <!-- ✅ View Bill as full-width outline button -->
           ${
             expense.expense_bill
-              ? `<a href="${expense.expense_bill}" target="_blank" class="view-bill-btn">View Bill</a>`
+              ? `<a onclick="openDoc('${expense.expense_bill}', 'Bill')" class="view-bill-btn">View Bill</a>`
               : ""
           }
 

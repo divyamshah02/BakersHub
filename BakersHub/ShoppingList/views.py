@@ -12,7 +12,7 @@ from utils.decorators import handle_exceptions, check_authentication  # your cus
 class ShoppingListViewSet(viewsets.ViewSet):
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user_id = request.query_params.get("user_id")
         list_id = request.query_params.get("list_id")
@@ -43,7 +43,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def create(self, request):
         serializer = ShoppingListSerializer(data=request.data)
         if serializer.is_valid():
@@ -64,7 +64,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def update(self, request, pk=None):
         try:
             shopping_list = ShoppingList.objects.get(pk=pk, is_active=True)
@@ -96,7 +96,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             shopping_list = ShoppingList.objects.get(pk=pk, is_active=True)
@@ -123,7 +123,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
 class ShoppingListItemViewSet(viewsets.ViewSet):
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         list_id = request.query_params.get("list_id")
         is_bought = request.query_params.get("is_bought")
@@ -149,7 +149,7 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def create(self, request):
         serializer = ShoppingListItemSerializer(data=request.data)
         if serializer.is_valid():
@@ -170,7 +170,7 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def update(self, request, pk=None):
         try:
             item = ShoppingListItem.objects.get(pk=pk)
@@ -202,7 +202,7 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             item = ShoppingListItem.objects.get(pk=pk)

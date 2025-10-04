@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.utils.translation import gettext_lazy as _
-from .models import User
+from .models import *
 
 
 @admin.register(User)
@@ -46,5 +46,14 @@ class UserAdmin(BaseUserAdmin):
             "classes": ("wide",),
             "fields": ("contact_number", "name", "email", "role", "password1", "password2", "plan_type"),
         }),
+    )
+
+@admin.register(OTPVerification)
+class OtpAdmin(admin.ModelAdmin):
+    list_display = (
+        'mobile',
+        'otp',
+        'is_verified',
+        'attempt_count'
     )
 

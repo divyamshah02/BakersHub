@@ -1,124 +1,99 @@
 // Shopping Lists Data
-let shoppingListsData = [
-  {
-    id: 1,
-    name: "Dmart List",
-    store: "Dmart",
-    color: "primary",
-    notes: "Weekly grocery shopping for baking supplies",
-    items: [
-      {
-        id: 1,
-        name: "All-Purpose Flour",
-        quantity: "10 lbs",
-        estimatedPrice: 8.99,
-        status: "pending",
-        dateBought: null,
-        actualPrice: null,
-        store: null,
-      },
-      {
-        id: 2,
-        name: "Granulated Sugar",
-        quantity: "5 lbs",
-        estimatedPrice: 4.99,
-        status: "bought",
-        dateBought: "2024-01-10",
-        actualPrice: 4.5,
-        store: "Dmart",
-      },
-      {
-        id: 3,
-        name: "Vanilla Extract",
-        quantity: "2 bottles",
-        estimatedPrice: 15.99,
-        status: "pending",
-        dateBought: null,
-        actualPrice: null,
-        store: null,
-      },
-    ],
-  },
-  {
-    id: 2,
-    name: "Walmart List",
-    store: "Walmart",
-    color: "success",
-    notes: "Equipment and packaging supplies",
-    items: [
-      {
-        id: 4,
-        name: "Cake Decorating Tips",
-        quantity: "1 set",
-        estimatedPrice: 12.5,
-        status: "bought",
-        dateBought: "2024-01-08",
-        actualPrice: 11.99,
-        store: "Walmart",
-      },
-      {
-        id: 5,
-        name: "Cupcake Liners",
-        quantity: "200 pieces",
-        estimatedPrice: 8.5,
-        status: "pending",
-        dateBought: null,
-        actualPrice: null,
-        store: null,
-      },
-    ],
-  },
-  {
-    id: 3,
-    name: "Specialty Store",
-    store: "Baking Supply Co",
-    color: "warning",
-    notes: "Professional baking ingredients",
-    items: [
-      {
-        id: 6,
-        name: "Food Coloring Set",
-        quantity: "1 set",
-        estimatedPrice: 18.99,
-        status: "pending",
-        dateBought: null,
-        actualPrice: null,
-        store: null,
-      },
-    ],
-  },
-]
+let shoppingListsData = []
+let allShoppingItems = []
+
+let shoppinglist_url = null
+let shoppinglistitem_url = null
+let csrf_token = null
+let userId = null
+
+let displayedListsCount = 0
+const LISTS_PER_PAGE = 6
 
 let currentShoppingListId = null
+let currentShoppingListPk = null
+let displayedItemsCount = 0
+const ITEMS_PER_PAGE = 5
 
 // Import Bootstrap
 const bootstrap = window.bootstrap
 
 // Initialize Shopping Page
-function initShopping() {
-  loadShoppingLists()
+async function initShopping(
+  shoppinglist_url_param,
+  shoppinglistitem_url_param,
+  csrf_token_param,
+  user_id_param = null,
+) {
+  shoppinglist_url = shoppinglist_url_param
+  shoppinglistitem_url = shoppinglistitem_url_param
+  csrf_token = csrf_token_param
+  userId = user_id_param
+
+  await loadShoppingLists()
+  setupFilters()
   setupFAB()
   setupMobileNotification()
 }
 
 // Load Shopping Lists
-function loadShoppingLists() {
+async function loadShoppingLists() {
+  if (!userId) {
+    showErrorMessage("User not logged in. Please log in.")
+    return
+  }
+
+  const [success, response] = await callApi("GET", `${shoppinglist_url}?user_id=${userId}`, null, csrf_token)
+
+  if (success && response.success) {
+    shoppingListsData = response.data
+    const grid = document.getElementById("shoppingListsGrid")
+    grid.innerHTML = ""
+
+    if (displayedListsCount > LISTS_PER_PAGE) {
+      renderShoppingLists(shoppingListsData.slice(0, displayedListsCount))
+    } else {
+      renderShoppingLists(shoppingListsData.slice(0, LISTS_PER_PAGE))
+      displayedListsCount = Math.min(LISTS_PER_PAGE, shoppingListsData.length)
+    }
+
+    updateLoadMoreButton()
+    updateTotalListsCount(shoppingListsData.length)
+  } else {
+    showErrorMessage(response.error || "Failed to load shopping lists")
+  }
+}
+
+// Render Shopping Lists
+function renderShoppingLists(lists) {
   const grid = document.getElementById("shoppingListsGrid")
 
-  grid.innerHTML = shoppingListsData
-    .map((list) => {
-      const totalItems = list.items.length
-      const boughtItems = list.items.filter((item) => item.status === "bought").length
-      const pendingItems = list.items.filter((item) => item.status === "pending")
-      const estimatedTotal = pendingItems.reduce((sum, item) => sum + (item.estimatedPrice || 0), 0)
+  updateTotalListsCount(shoppingListsData.length)
+
+  if (!lists || lists.length === 0) {
+    grid.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+        <p class="text-muted">No shopping lists found</p>
+      </div>
+    `
+    return
+  }
+
+  const listCards = lists
+    .map((list, index) => {
+      const totalItems = list.items ? list.items.length : 0
+      const boughtItems = list.items ? list.items.filter((item) => item.is_bought).length : 0
       const progress = totalItems > 0 ? (boughtItems / totalItems) * 100 : 0
 
+      const listIndex = shoppingListsData.findIndex((l) => l.id === list.id)
+
       return `
-      <div class="shopping-list-card color-${list.color} fade-in" onclick="openShoppingListModal(${list.id})">
+      <div class="shopping-list-card color-primary fade-in" onclick="openShoppingListModal('${list.list_id}', ${list.id})">
         <div class="shopping-list-header">
           <div>
-            <div class="shopping-list-name">${list.name}</div>
-            ${list.store ? `<div class="shopping-list-store"><i class="fas fa-store"></i> ${list.store}</div>` : ""}
+            <div class="shopping-list-name">${shoppingListsData.length - listIndex}) ${list.name}</div>
+            <div class="shopping-list-store"><i class="fas fa-calendar"></i> ${formatDate(list.created_at)}</div>
           </div>
           <div class="shopping-list-actions" onclick="event.stopPropagation()">
             <button class="btn btn-list-action btn-edit-list" onclick="editShoppingList(${list.id})" title="Edit List">
@@ -141,8 +116,6 @@ function loadShoppingLists() {
           </div>
         </div>
 
-        ${list.notes ? `<div class="shopping-list-notes">${list.notes}</div>` : ""}
-
         <div class="shopping-list-footer">
           <div class="shopping-list-progress">
             <div class="shopping-list-progress-label">Progress: ${Math.round(progress)}%</div>
@@ -150,47 +123,114 @@ function loadShoppingLists() {
               <div class="progress-bar" style="width: ${progress}%"></div>
             </div>
           </div>
-          <div class="shopping-list-estimated">
-            <strong>$${estimatedTotal.toFixed(2)}</strong>
-            <small class="text-muted d-block">Estimated</small>
-          </div>
         </div>
       </div>
     `
     })
     .join("")
+
+  grid.innerHTML += listCards
 }
 
 // Add Shopping List
-function addShoppingList() {
-  const newList = {
-    id: Math.max(...shoppingListsData.map((list) => list.id), 0) + 1,
-    name: document.getElementById("shoppingListName").value,
-    store: document.getElementById("shoppingListStore").value,
-    color: document.getElementById("shoppingListColor").value,
-    notes: document.getElementById("shoppingListNotes").value,
-    items: [],
+async function addShoppingList() {
+  const name = document.getElementById("shoppingListName").value.trim()
+
+  if (!name) {
+    showErrorMessage("Please enter a list name")
+    return
   }
 
-  shoppingListsData.push(newList)
-  loadShoppingLists()
+  const listData = {
+    user_id: userId,
+    name: name,
+  }
 
-  const modal = bootstrap.Modal.getInstance(document.getElementById("addShoppingListModal"))
-  modal.hide()
-  document.getElementById("addShoppingListForm").reset()
+  const [success, response] = await callApi("POST", shoppinglist_url, listData, csrf_token)
 
-  showSuccessMessage("Shopping list created successfully!")
+  if (success && response.success) {
+    await loadShoppingLists()
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("addShoppingListModal"))
+    modal.hide()
+    document.getElementById("addShoppingListForm").reset()
+
+    showSuccessMessage("Shopping list created successfully!")
+  } else {
+    showErrorMessage(response.error || "Failed to create shopping list")
+  }
+}
+
+// Edit Shopping List
+async function editShoppingList(listId) {
+  const list = shoppingListsData.find((l) => l.id === listId)
+  if (!list) {
+    showErrorMessage("Shopping list not found")
+    return
+  }
+
+  document.getElementById("editShoppingListName").value = list.name
+  document.getElementById("editListId").value = list.id
+
+  const editModal = new bootstrap.Modal(document.getElementById("editShoppingListModal"))
+  editModal.show()
+}
+
+// Save Shopping List Edit
+async function saveShoppingListEdit() {
+  const listId = document.getElementById("editListId").value
+  const name = document.getElementById("editShoppingListName").value.trim()
+
+  if (!name) {
+    showErrorMessage("Please enter a list name")
+    return
+  }
+
+  const listData = {
+    name: name,
+  }
+
+  const [success, response] = await callApi("PATCH", `${shoppinglist_url}${listId}/`, listData, csrf_token)
+
+  if (success && response.success) {
+    await loadShoppingLists()
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("editShoppingListModal"))
+    modal.hide()
+
+    showSuccessMessage("Shopping list updated successfully!")
+  } else {
+    showErrorMessage(response.error || "Failed to update shopping list")
+  }
+}
+
+// Delete Shopping List
+async function deleteShoppingList(listId) {
+  if (!confirm("Are you sure you want to delete this shopping list and all its items?")) {
+    return
+  }
+
+  const [success, response] = await callApi("DELETE", `${shoppinglist_url}${listId}/`, null, csrf_token)
+
+  if (success && response.success) {
+    await loadShoppingLists()
+    showSuccessMessage("Shopping list deleted successfully!")
+  } else {
+    showErrorMessage(response.error || "Failed to delete shopping list")
+  }
 }
 
 // Open Shopping List Modal
-function openShoppingListModal(listId) {
+async function openShoppingListModal(listId, listPk) {
   currentShoppingListId = listId
-  const list = shoppingListsData.find((l) => l.id === listId)
+  currentShoppingListPk = listPk
+  const list = shoppingListsData.find((l) => l.list_id === listId)
 
   if (list) {
     document.getElementById("shoppingListModalTitle").textContent = list.name
-    loadShoppingListItems(list)
-    updateModalStats(list)
+
+    // Load items for this list
+    await loadShoppingListItems(listId)
 
     const modal = new bootstrap.Modal(document.getElementById("shoppingListItemsModal"))
     modal.show()
@@ -198,39 +238,68 @@ function openShoppingListModal(listId) {
 }
 
 // Load Shopping List Items
-function loadShoppingListItems(list) {
+async function loadShoppingListItems(listId) {
+  const [success, response] = await callApi("GET", `${shoppinglistitem_url}?list_id=${listId}`, null, csrf_token)
+
+  if (success && response.success) {
+    allShoppingItems = response.data
+    const container = document.getElementById("shoppingItemsContainer")
+    container.innerHTML = ""
+
+    displayedItemsCount = Math.min(ITEMS_PER_PAGE, allShoppingItems.length)
+    renderShoppingListItems(allShoppingItems.slice(0, displayedItemsCount))
+
+    updateItemLoadMoreButton()
+    updateModalStats()
+  } else {
+    showErrorMessage(response.error || "Failed to load shopping items")
+  }
+}
+
+// Render Shopping List Items
+function renderShoppingListItems(items) {
   const container = document.getElementById("shoppingItemsContainer")
 
-  container.innerHTML = list.items
-    .map(
-      (item) => `
-    <div class="shopping-item-modal ${item.status === "bought" ? "bought" : ""}">
+  if (!items || items.length === 0) {
+    container.innerHTML = `
+      <div class="text-center py-3">
+        <p class="text-muted">No items in this list yet</p>
+      </div>
+    `
+    return
+  }
+
+  const itemsHtml = items
+    .map((item, index) => {
+      const itemIndex = allShoppingItems.findIndex((i) => i.id === item.id)
+      return `
+    <div class="shopping-item-modal ${item.is_bought ? "bought" : ""}">
       <div class="shopping-item-modal-header">
         <div>
-          <div class="shopping-item-modal-name">${item.name}</div>
-          <div class="shopping-item-modal-quantity">${item.quantity}</div>
+          <div class="shopping-item-modal-name">${allShoppingItems.length - itemIndex}) ${item.item_name}</div>
+          <div class="shopping-item-modal-quantity">${item.quantity} ${item.unit}</div>
         </div>
         <div class="shopping-item-modal-price">
           ${
-            item.status === "bought" && item.actualPrice
-              ? `$${item.actualPrice.toFixed(2)} (paid)`
-              : `$${item.estimatedPrice ? item.estimatedPrice.toFixed(2) : "0.00"} (est.)`
+            item.is_bought && item.bought_amount
+              ? `₹${Number.parseFloat(item.bought_amount).toFixed(2)} (paid)`
+              : `Not bought`
           }
         </div>
       </div>
       
       ${
-        item.status === "bought" && item.store
+        item.is_bought
           ? `<div class="bought-info">
             <i class="fas fa-check-circle"></i>
-            Bought on ${formatDate(item.dateBought)} at ${item.store}
+            Bought on ${formatDate(item.created_at)}
           </div>`
           : ""
       }
       
       <div class="shopping-item-modal-actions">
         ${
-          item.status === "pending"
+          !item.is_bought
             ? `<button class="btn btn-item-action btn-mark-bought" onclick="markItemBought(${item.id})">
               <i class="fas fa-shopping-cart"></i> Mark Bought
             </button>`
@@ -244,136 +313,278 @@ function loadShoppingListItems(list) {
         </button>
       </div>
     </div>
-  `,
-    )
+  `
+    })
     .join("")
+
+  container.innerHTML += itemsHtml
 }
 
 // Add Item to Current List
-function addItemToCurrentList() {
-  if (!currentShoppingListId) return
-
-  const list = shoppingListsData.find((l) => l.id === currentShoppingListId)
-  if (!list) return
-
-  const name = document.getElementById("newItemName").value.trim()
-  const quantity = document.getElementById("newItemQuantity").value.trim()
-  const estimatedPrice = Number.parseFloat(document.getElementById("newItemEstPrice").value) || 0
-
-  if (!name) {
-    alert("Please enter an item name")
+async function addItemToCurrentList() {
+  if (!currentShoppingListPk) {
+    showErrorMessage("No shopping list selected")
     return
   }
 
-  const newItem = {
-    id: Math.max(...shoppingListsData.flatMap((l) => l.items.map((i) => i.id)), 0) + 1,
-    name: name,
-    quantity: quantity || "1",
-    estimatedPrice: estimatedPrice,
-    status: "pending",
-    dateBought: null,
-    actualPrice: null,
-    store: null,
+  const name = document.getElementById("newItemName").value.trim()
+  const quantity = document.getElementById("newItemQuantity").value.trim()
+  const unit = document.getElementById("newItemUnit").value.trim()
+
+  if (!name || !quantity || !unit) {
+    showErrorMessage("Please fill in all item fields")
+    return
   }
 
-  list.items.push(newItem)
-  loadShoppingListItems(list)
-  updateModalStats(list)
-  loadShoppingLists()
-
-  document.getElementById("newItemName").value = ""
-  document.getElementById("newItemQuantity").value = ""
-  document.getElementById("newItemEstPrice").value = ""
-
-  showSuccessMessage("Item added to shopping list!")
-}
-
-// Update Modal Stats
-function updateModalStats(list) {
-  const totalItems = list.items.length
-  const boughtItems = list.items.filter((item) => item.status === "bought").length
-  const pendingItems = list.items.filter((item) => item.status === "pending")
-  const estimatedTotal = pendingItems.reduce((sum, item) => sum + (item.estimatedPrice || 0), 0)
-
-  document.getElementById("modalTotalItems").textContent = totalItems
-  document.getElementById("modalBoughtItems").textContent = boughtItems
-  document.getElementById("modalEstimatedTotal").textContent = estimatedTotal.toFixed(2)
-}
-
-// Mark Item as Bought
-function markItemBought(itemId) {
-  let item = null
-  let parentList = null
-
-  for (const list of shoppingListsData) {
-    item = list.items.find((i) => i.id === itemId)
-    if (item) {
-      parentList = list
-      break
-    }
+  const itemData = {
+    shopping_list: currentShoppingListPk,
+    item_name: name,
+    quantity: Number.parseFloat(quantity),
+    unit: unit,
+    is_bought: false,
   }
 
-  if (item) {
-    const actualPrice = prompt(`Enter actual price for ${item.name}:`, item.estimatedPrice || "0")
-    if (actualPrice !== null) {
-      item.status = "bought"
-      item.actualPrice = Number.parseFloat(actualPrice)
-      item.dateBought = new Date().toISOString().split("T")[0]
-      item.store = parentList.store
+  const [success, response] = await callApi("POST", shoppinglistitem_url, itemData, csrf_token)
 
-      loadShoppingListItems(parentList)
-      updateModalStats(parentList)
-      loadShoppingLists()
+  if (success && response.success) {
+    await loadShoppingListItems(currentShoppingListId)
+    await loadShoppingLists()
 
-      showSuccessMessage(`${item.name} marked as bought!`)
-    }
-  }
-}
+    document.getElementById("newItemName").value = ""
+    document.getElementById("newItemQuantity").value = ""
+    document.getElementById("newItemUnit").value = ""
 
-// Edit Shopping List
-function editShoppingList(listId) {
-  const list = shoppingListsData.find((l) => l.id === listId)
-  if (list) {
-    alert(`Edit shopping list: ${list.name}`)
-  }
-}
-
-// Delete Shopping List
-function deleteShoppingList(listId) {
-  if (confirm("Are you sure you want to delete this shopping list and all its items?")) {
-    shoppingListsData = shoppingListsData.filter((l) => l.id !== listId)
-    loadShoppingLists()
-    showSuccessMessage("Shopping list deleted successfully!")
+    showSuccessMessage("Item added to shopping list!")
+  } else {
+    showErrorMessage(response.error || "Failed to add item")
   }
 }
 
 // Edit Shopping Item
-function editShoppingItem(itemId) {
-  let item = null
-  for (const list of shoppingListsData) {
-    item = list.items.find((i) => i.id === itemId)
-    if (item) break
+async function editShoppingItem(itemId) {
+  const item = allShoppingItems.find((i) => i.id === itemId)
+  if (!item) {
+    showErrorMessage("Item not found")
+    return
   }
 
-  if (item) {
-    alert(`Edit shopping item: ${item.name}`)
+  document.getElementById("editItemId").value = item.id
+  document.getElementById("editItemName").value = item.item_name
+  document.getElementById("editItemQuantity").value = item.quantity
+  document.getElementById("editItemUnit").value = item.unit
+  document.getElementById("editItemBoughtAmount").value = item.bought_amount || ""
+  document.getElementById("editItemIsBought").checked = item.is_bought
+
+  const editModal = new bootstrap.Modal(document.getElementById("editShoppingItemModal"))
+  editModal.show()
+}
+
+// Save Shopping Item Edit
+async function saveShoppingItemEdit() {
+  const itemId = document.getElementById("editItemId").value
+  const name = document.getElementById("editItemName").value.trim()
+  const quantity = document.getElementById("editItemQuantity").value.trim()
+  const unit = document.getElementById("editItemUnit").value.trim()
+  const boughtAmount = document.getElementById("editItemBoughtAmount").value.trim()
+  const isBought = document.getElementById("editItemIsBought").checked
+
+  if (!name || !quantity || !unit) {
+    showErrorMessage("Please fill in all required fields")
+    return
+  }
+
+  const itemData = {
+    item_name: name,
+    quantity: Number.parseFloat(quantity),
+    unit: unit,
+    is_bought: isBought,
+    bought_amount: boughtAmount ? Number.parseFloat(boughtAmount) : null,
+  }
+
+  const [success, response] = await callApi("PATCH", `${shoppinglistitem_url}${itemId}/`, itemData, csrf_token)
+
+  if (success && response.success) {
+    await loadShoppingListItems(currentShoppingListId)
+    await loadShoppingLists()
+
+    const modal = bootstrap.Modal.getInstance(document.getElementById("editShoppingItemModal"))
+    modal.hide()
+
+    showSuccessMessage("Item updated successfully!")
+  } else {
+    showErrorMessage(response.error || "Failed to update item")
   }
 }
 
 // Delete Shopping Item
-function deleteShoppingItem(itemId) {
-  if (confirm("Are you sure you want to delete this shopping item?")) {
-    for (const list of shoppingListsData) {
-      const itemIndex = list.items.findIndex((i) => i.id === itemId)
-      if (itemIndex !== -1) {
-        list.items.splice(itemIndex, 1)
-        loadShoppingListItems(list)
-        updateModalStats(list)
-        loadShoppingLists()
-        showSuccessMessage("Shopping item deleted successfully!")
-        break
-      }
+async function deleteShoppingItem(itemId) {
+  if (!confirm("Are you sure you want to delete this shopping item?")) {
+    return
+  }
+
+  const [success, response] = await callApi("DELETE", `${shoppinglistitem_url}${itemId}/`, null, csrf_token)
+
+  if (success && response.success) {
+    await loadShoppingListItems(currentShoppingListId)
+    await loadShoppingLists()
+    showSuccessMessage("Shopping item deleted successfully!")
+  } else {
+    showErrorMessage(response.error || "Failed to delete item")
+  }
+}
+
+// Mark Item as Bought
+async function markItemBought(itemId) {
+  const item = allShoppingItems.find((i) => i.id === itemId)
+  if (!item) return
+
+  const actualAmount = prompt(`Enter actual amount paid for ${item.item_name}:`, "0")
+  if (actualAmount !== null) {
+    const itemData = {
+      is_bought: true,
+      bought_amount: Number.parseFloat(actualAmount),
     }
+
+    const [success, response] = await callApi("PATCH", `${shoppinglistitem_url}${itemId}/`, itemData, csrf_token)
+
+    if (success && response.success) {
+      await loadShoppingListItems(currentShoppingListId)
+      await loadShoppingLists()
+      showSuccessMessage(`${item.item_name} marked as bought!`)
+    } else {
+      showErrorMessage(response.error || "Failed to mark item as bought")
+    }
+  }
+}
+
+// Update Modal Stats
+function updateModalStats() {
+  const totalItems = allShoppingItems.length
+  const boughtItems = allShoppingItems.filter((item) => item.is_bought).length
+
+  document.getElementById("modalTotalItems").textContent = totalItems
+  document.getElementById("modalBoughtItems").textContent = boughtItems
+}
+
+// Filter Items in Modal
+function filterItemsInModal() {
+  const statusFilter = document.getElementById("itemStatusFilter").value
+  const searchTerm = document.getElementById("searchItems").value.toLowerCase()
+
+  const filtered = allShoppingItems.filter((item) => {
+    const matchesStatus = !statusFilter || (statusFilter === "bought" ? item.is_bought : !item.is_bought)
+    const matchesSearch = !searchTerm || item.item_name.toLowerCase().includes(searchTerm)
+    return matchesStatus && matchesSearch
+  })
+
+  const container = document.getElementById("shoppingItemsContainer")
+  container.innerHTML = ""
+
+  displayedItemsCount = Math.min(ITEMS_PER_PAGE, filtered.length)
+  renderShoppingListItems(filtered.slice(0, displayedItemsCount))
+
+  // Update for filtered items
+  const originalItems = allShoppingItems
+  allShoppingItems = filtered
+  updateItemLoadMoreButton()
+  allShoppingItems = originalItems
+}
+
+// Load More Items
+function loadMoreItems() {
+  const nextBatch = allShoppingItems.slice(displayedItemsCount, displayedItemsCount + ITEMS_PER_PAGE)
+  renderShoppingListItems(nextBatch)
+  displayedItemsCount += ITEMS_PER_PAGE
+  updateItemLoadMoreButton()
+}
+
+// Update Item Load More Button
+function updateItemLoadMoreButton() {
+  const loadMoreContainer = document.getElementById("loadMoreItemsContainer")
+  if (displayedItemsCount < allShoppingItems.length) {
+    loadMoreContainer.style.display = "block"
+  } else {
+    loadMoreContainer.style.display = "none"
+  }
+}
+
+// Load More Lists
+function loadMoreLists() {
+  const nextBatch = shoppingListsData.slice(displayedListsCount, displayedListsCount + LISTS_PER_PAGE)
+  renderShoppingLists(nextBatch)
+  displayedListsCount += LISTS_PER_PAGE
+  updateLoadMoreButton()
+}
+
+// Update Load More Button
+function updateLoadMoreButton() {
+  const loadMoreContainer = document.getElementById("loadMoreContainer")
+  if (displayedListsCount < shoppingListsData.length) {
+    loadMoreContainer.style.display = "block"
+  } else {
+    loadMoreContainer.style.display = "none"
+  }
+}
+
+// Setup Filters
+function setupFilters() {
+  document.getElementById("dateFilter").addEventListener("change", filterLists)
+  document.getElementById("searchLists").addEventListener("input", filterLists)
+}
+
+// Filter Lists
+function filterLists() {
+  const searchTerm = document.getElementById("searchLists").value.toLowerCase()
+  const dateFilter = document.getElementById("dateFilter").value
+
+  const filtered = shoppingListsData.filter((list) => {
+    const matchesSearch = !searchTerm || list.name.toLowerCase().includes(searchTerm)
+
+    const listDate = new Date(list.created_at).toLocaleDateString("en-CA")
+    const matchesDate = !dateFilter || listDate === dateFilter
+
+    return matchesSearch && matchesDate
+  })
+
+  displayedListsCount = 0
+  const grid = document.getElementById("shoppingListsGrid")
+  grid.innerHTML = ""
+  renderShoppingLists(filtered.slice(0, LISTS_PER_PAGE))
+  displayedListsCount = Math.min(LISTS_PER_PAGE, filtered.length)
+
+  // Update shoppingListsData temporarily for pagination
+  const originalData = shoppingListsData
+  shoppingListsData = filtered
+  updateLoadMoreButton()
+  shoppingListsData = originalData
+}
+
+// Clear Filters
+function clearFilters() {
+  document.getElementById("dateFilter").value = ""
+  document.getElementById("searchLists").value = ""
+  loadShoppingLists()
+}
+
+// Toggle Filters
+function toggleFilters() {
+  const filtersCard = document.getElementById("filtersCard")
+  const toggleBtn = document.getElementById("toggleFiltersBtn")
+
+  if (filtersCard.style.display === "none") {
+    filtersCard.style.display = "block"
+    toggleBtn.innerHTML = '<i class="fas fa-times"></i>'
+  } else {
+    filtersCard.style.display = "none"
+    toggleBtn.innerHTML = '<i class="fas fa-filter"></i>'
+  }
+}
+
+// Update Total Lists Count
+function updateTotalListsCount(count) {
+  const totalListsCount = document.getElementById("totalListsCount")
+  if (totalListsCount) {
+    totalListsCount.textContent = count
   }
 }
 
@@ -420,6 +631,31 @@ function formatDate(dateString) {
 function showSuccessMessage(message) {
   const alert = document.createElement("div")
   alert.className = "alert alert-success alert-dismissible fade show position-fixed"
+
+  const isMobile = window.innerWidth < 992
+  if (isMobile) {
+    alert.style.cssText = "top: 4.5rem; left: 1rem; right: 1rem; z-index: 9999;"
+  } else {
+    alert.style.cssText = "top: 100px; right: 20px; z-index: 9999; min-width: 300px;"
+  }
+
+  alert.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  `
+
+  document.body.appendChild(alert)
+
+  setTimeout(() => {
+    if (alert.parentNode) {
+      alert.remove()
+    }
+  }, 3000)
+}
+
+function showErrorMessage(message) {
+  const alert = document.createElement("div")
+  alert.className = "alert alert-danger alert-dismissible fade show position-fixed"
 
   const isMobile = window.innerWidth < 992
   if (isMobile) {

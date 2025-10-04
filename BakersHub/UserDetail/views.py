@@ -106,7 +106,7 @@ class OtpAuthViewSet(viewsets.ViewSet):
             "error": None
         }, status=status.HTTP_201_CREATED)
 
-    @handle_exceptions
+    # @handle_exceptions
     def update(self, request, pk):
         """
         API 2: Verify OTP & Login/Register
@@ -184,7 +184,7 @@ class OtpAuthViewSet(viewsets.ViewSet):
         else:
             user = User.objects.create(
                 contact_number=otp_obj.mobile,
-                role='customer'
+                role='baker'
             )
             user_details_filled = False
 
@@ -293,7 +293,7 @@ class UserProfileViewSet(viewsets.ViewSet):
             }, status=404)
 
     @handle_exceptions
-    # @check_authentication()(required_role="customer")
+    # @check_authentication(required_role="baker")
     def update(self, request, pk=None):
         """
         Update user profile information

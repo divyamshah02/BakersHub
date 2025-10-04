@@ -8,8 +8,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="/static/css/styles.css" rel="stylesheet">
 </head>
-<body onload="initShopping()">
-     Top Navigation (Desktop) 
+<body>
+    <!-- Top Navigation (Desktop) -->
     <nav class="navbar navbar-expand-lg fixed-top d-none d-lg-flex">
         <div class="container-fluid">
             <a class="navbar-brand" href="dashboard.html">
@@ -38,7 +38,7 @@
         </div>
     </nav>
 
-     Mobile Header 
+    <!-- Mobile Header -->
     <header class="mobile-header d-lg-none">
         <div class="mobile-header-content">
             <div class="mobile-brand">
@@ -57,7 +57,7 @@
         </div>
     </header>
 
-     Bottom Navigation (Mobile) 
+    <!-- Bottom Navigation (Mobile) -->
     <nav class="bottom-nav d-lg-none">
         <a class="bottom-nav-item" href="orders.html">
             <i class="fas fa-birthday-cake"></i>
@@ -81,7 +81,7 @@
         </a>
     </nav>
 
-     Floating Action Button (Mobile) 
+    <!-- Floating Action Button (Mobile) -->
     <div class="fab-container d-lg-none">
         <button class="fab" id="mainFab">
             <i class="fas fa-plus"></i>
@@ -94,28 +94,60 @@
         </div>
     </div>
 
-     Main Content 
-    <main class="main-content">
+    <!-- Main Content -->
+    <main class="main-content mb-5">
         <div class="container-fluid">
-             Page Header 
-            <div class="page-header">
-                <div class="page-header-content">
+            <!-- Page Header -->
+            <div class="page-header text-center">
+                <div class="page-header-content text-center">
                     <h1 class="page-title">Shopping Lists</h1>
                     <p class="page-subtitle">Organize your shopping by store</p>
                 </div>
-                <button class="btn btn-primary d-none d-lg-inline-flex" data-bs-toggle="modal" data-bs-target="#addShoppingListModal">
-                    <i class="fas fa-plus me-2"></i>New List
+            </div>
+
+            <!-- Added New List button for mobile -->
+            <button class="btn btn-primary w-100 mb-3" data-bs-toggle="modal" data-bs-target="#addShoppingListModal">
+                <i class="fas fa-plus me-2"></i>New List
+            </button>
+
+            <!-- Added shopping lists header with total count and filter toggle -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">Total Lists: <span id="totalListsCount">0</span></h5>
+                <button class="btn btn-primary" id="toggleFiltersBtn" onclick="toggleFilters()">
+                    <i class="fas fa-filter"></i>
                 </button>
             </div>
 
-             Shopping Lists Grid 
+            <!-- Made filters collapsible and hidden by default -->
+            <div class="filters-card mb-4" id="filtersCard" style="display: none;">
+                <div class="row g-3">
+                    <div class="col-6 col-md-4">
+                        <input type="date" class="form-control" id="dateFilter">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <input type="text" class="form-control" placeholder="Search lists..." id="searchLists">
+                    </div>
+                    <div class="col-12 col-md-2">
+                        <button class="btn btn-outline-secondary w-100" onclick="clearFilters()">Clear</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Shopping Lists Grid -->
             <div class="shopping-lists-grid" id="shoppingListsGrid">
-                 Shopping lists will be populated by JavaScript 
+                <!-- Shopping lists will be populated by JavaScript -->
+            </div>
+
+            <!-- Added Load More button -->
+            <div class="text-center mt-4" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-outline-primary" onclick="loadMoreLists()">
+                    <i class="fas fa-chevron-down me-2"></i>Load More
+                </button>
             </div>
         </div>
     </main>
 
-     Add Shopping List Modal 
+    <!-- Add Shopping List Modal -->
     <div class="modal fade" id="addShoppingListModal" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -130,25 +162,6 @@
                                 <label class="form-label">List Name</label>
                                 <input type="text" class="form-control" id="shoppingListName" placeholder="e.g., Dmart List, Walmart List" required>
                             </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Store/Location</label>
-                                <input type="text" class="form-control" id="shoppingListStore" placeholder="Optional">
-                            </div>
-                            <div class="col-md-6">
-                                <label class="form-label">Color Theme</label>
-                                <select class="form-select" id="shoppingListColor">
-                                    <option value="primary">Blue</option>
-                                    <option value="success">Green</option>
-                                    <option value="warning">Orange</option>
-                                    <option value="danger">Red</option>
-                                    <option value="info">Cyan</option>
-                                    <option value="purple">Purple</option>
-                                </select>
-                            </div>
-                            <div class="col-12">
-                                <label class="form-label">Notes</label>
-                                <textarea class="form-control" id="shoppingListNotes" rows="2" placeholder="Any special notes about this shopping list"></textarea>
-                            </div>
                         </div>
                     </form>
                 </div>
@@ -160,7 +173,34 @@
         </div>
     </div>
 
-     Shopping List Items Modal 
+    <!-- Edit Shopping List Modal -->
+    <div class="modal fade" id="editShoppingListModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Shopping List</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editShoppingListForm">
+                        <input type="hidden" id="editListId">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">List Name</label>
+                                <input type="text" class="form-control" id="editShoppingListName" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveShoppingListEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shopping List Items Modal -->
     <div class="modal fade" id="shoppingListItemsModal" tabindex="-1">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
@@ -169,7 +209,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                     Add Item Form 
+                    <!-- Add Item Form -->
                     <div class="card mb-4">
                         <div class="card-body">
                             <h6 class="card-title">Add New Item</h6>
@@ -179,10 +219,10 @@
                                         <input type="text" class="form-control" id="newItemName" placeholder="Item name" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="text" class="form-control" id="newItemQuantity" placeholder="Quantity">
+                                        <input type="number" class="form-control" id="newItemQuantity" placeholder="Quantity" step="0.01" required>
                                     </div>
                                     <div class="col-md-3">
-                                        <input type="number" class="form-control" id="newItemEstPrice" step="0.01" placeholder="Est. price">
+                                        <input type="text" class="form-control" id="newItemUnit" placeholder="Unit (e.g., kg, lbs)" required>
                                     </div>
                                     <div class="col-md-2">
                                         <button type="button" class="btn btn-primary w-100" onclick="addItemToCurrentList()">
@@ -194,17 +234,39 @@
                         </div>
                     </div>
 
-                     Items List 
+                    <!-- Added filter for items -->
+                    <div class="mb-3">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <select class="form-select" id="itemStatusFilter" onchange="filterItemsInModal()">
+                                    <option value="">All Items</option>
+                                    <option value="pending">Pending</option>
+                                    <option value="bought">Bought</option>
+                                </select>
+                            </div>
+                            <div class="col-6">
+                                <input type="text" class="form-control" id="searchItems" placeholder="Search items..." oninput="filterItemsInModal()">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Items List -->
                     <div class="shopping-items-container" id="shoppingItemsContainer">
-                         Items will be populated by JavaScript 
+                        <!-- Items will be populated by JavaScript -->
+                    </div>
+
+                    <!-- Added Load More for items -->
+                    <div class="text-center mt-3" id="loadMoreItemsContainer" style="display: none;">
+                        <button class="btn btn-outline-primary btn-sm" onclick="loadMoreItems()">
+                            <i class="fas fa-chevron-down me-2"></i>Load More Items
+                        </button>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <div class="me-auto">
                         <small class="text-muted">
                             Total Items: <span id="modalTotalItems">0</span> | 
-                            Bought: <span id="modalBoughtItems">0</span> | 
-                            Estimated: $<span id="modalEstimatedTotal">0.00</span>
+                            Bought: <span id="modalBoughtItems">0</span>
                         </small>
                     </div>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -213,7 +275,63 @@
         </div>
     </div>
 
+    <!-- Edit Shopping Item Modal -->
+    <div class="modal fade" id="editShoppingItemModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Shopping Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editShoppingItemForm">
+                        <input type="hidden" id="editItemId">
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label">Item Name</label>
+                                <input type="text" class="form-control" id="editItemName" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" class="form-control" id="editItemQuantity" step="0.01" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Unit</label>
+                                <input type="text" class="form-control" id="editItemUnit" required>
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label">Bought Amount (optional)</label>
+                                <input type="number" class="form-control" id="editItemBoughtAmount" step="0.01">
+                            </div>
+                            <div class="col-12">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="editItemIsBought">
+                                    <label class="form-check-label" for="editItemIsBought">
+                                        Mark as bought
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveShoppingItemEdit()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/js/api_caller.js"></script>
     <script src="/static/js/shopping.js"></script>
+
+    <script>
+        window.onload = async function () {
+            toggle_loader()
+            await initShopping("{% url 'shoppinglist-api-list' %}", "{% url 'shoppinglist-item-api-list' %}", "{{csrf_token}}", "{{user.user_id}}")
+            toggle_loader()
+        }
+    </script>
 </body>
 </html>

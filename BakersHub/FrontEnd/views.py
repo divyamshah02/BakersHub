@@ -7,6 +7,14 @@ from utils.decorators import handle_exceptions, check_authentication  # your cus
 from django.shortcuts import render
 
 
+class LoginViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    @check_authentication()
+    def list(self, request):
+        return render(request, 'login.html')
+
+
 class DashboardViewSet(viewsets.ViewSet):
 
     @handle_exceptions
