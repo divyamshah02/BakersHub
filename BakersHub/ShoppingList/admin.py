@@ -14,6 +14,6 @@ class ShoppingListAdmin(admin.ModelAdmin):
 
 @admin.register(ShoppingListItem)
 class ShoppingListItemAdmin(admin.ModelAdmin):
-    list_display = ("item_id", "shopping_list", "item_name", "quantity", "unit", "is_bought", "created_at")
+    list_display = ("item_id", "shopping_list", "item_name", "quantity", "unit", "is_bought", "created_at", "is_active")
     search_fields = ("item_id", "item_name", "shopping_list__list_id")
     list_filter = ("is_bought", "created_at")

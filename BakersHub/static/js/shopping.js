@@ -91,9 +91,13 @@ function renderShoppingLists(lists) {
       return `
       <div class="shopping-list-card color-primary fade-in" onclick="openShoppingListModal('${list.list_id}', ${list.id})">
         <div class="shopping-list-header">
-          <div>
-            <div class="shopping-list-name">${shoppingListsData.length - listIndex}) ${list.name}</div>
-            <div class="shopping-list-store"><i class="fas fa-calendar"></i> ${formatDate(list.created_at)}</div>
+          <div class="shopping-list-header-left">
+            <div class="shopping-list-name">
+              ${shoppingListsData.length - listIndex}) ${list.name}
+            </div>
+            <div class="shopping-list-store">
+              <i class="fas fa-calendar"></i> ${formatDate(list.created_at)}
+            </div>
           </div>
           <div class="shopping-list-actions" onclick="event.stopPropagation()">
             <button class="btn btn-list-action btn-edit-list" onclick="editShoppingList(${list.id})" title="Edit List">
@@ -104,7 +108,7 @@ function renderShoppingLists(lists) {
             </button>
           </div>
         </div>
-        
+
         <div class="shopping-list-stats">
           <div class="shopping-list-stat">
             <div class="shopping-list-stat-value">${totalItems}</div>
@@ -251,6 +255,18 @@ async function loadShoppingListItems(listId) {
 
     updateItemLoadMoreButton()
     updateModalStats()
+
+    const formContainer = document.getElementById("addItemFormContainer")
+    const toggleIcon = document.getElementById("addItemToggleIcon")
+    if (allShoppingItems.length === 0) {
+      formContainer.classList.add("show")
+      toggleIcon.classList.remove("fa-chevron-down")
+      toggleIcon.classList.add("fa-chevron-up")
+    } else {
+      formContainer.classList.remove("show")
+      toggleIcon.classList.remove("fa-chevron-up")
+      toggleIcon.classList.add("fa-chevron-down")
+    }
   } else {
     showErrorMessage(response.error || "Failed to load shopping items")
   }
@@ -276,7 +292,7 @@ function renderShoppingListItems(items) {
     <div class="shopping-item-modal ${item.is_bought ? "bought" : ""}">
       <div class="shopping-item-modal-header">
         <div>
-          <div class="shopping-item-modal-name">${allShoppingItems.length - itemIndex}) ${item.item_name}</div>
+          <div class="shopping-item-modal-name">${itemIndex+1}) ${item.item_name}</div>
           <div class="shopping-item-modal-quantity">${item.quantity} ${item.unit}</div>
         </div>
         <div class="shopping-item-modal-price">
@@ -287,7 +303,6 @@ function renderShoppingListItems(items) {
           }
         </div>
       </div>
-      
       ${
         item.is_bought
           ? `<div class="bought-info">
@@ -301,15 +316,15 @@ function renderShoppingListItems(items) {
         ${
           !item.is_bought
             ? `<button class="btn btn-item-action btn-mark-bought" onclick="markItemBought(${item.id})">
-              <i class="fas fa-shopping-cart"></i> Mark Bought
+              <i class="fas fa-shopping-cart"></i> Bought
             </button>`
             : ""
         }
-        <button class="btn btn-item-action btn-edit-item" onclick="editShoppingItem(${item.id})">
-          <i class="fas fa-edit"></i> Edit
+        <button class="btn btn-item-action btn-icon-only btn-edit-item" onclick="editShoppingItem(${item.id})" title="Edit">
+          <i class="fas fa-edit"></i>
         </button>
-        <button class="btn btn-item-action btn-delete-item" onclick="deleteShoppingItem(${item.id})">
-          <i class="fas fa-trash"></i> Delete
+        <button class="btn btn-item-action btn-icon-only btn-delete-item" onclick="deleteShoppingItem(${item.id})" title="Delete">
+          <i class="fas fa-trash"></i>
         </button>
       </div>
     </div>
@@ -329,7 +344,7 @@ async function addItemToCurrentList() {
 
   const name = document.getElementById("newItemName").value.trim()
   const quantity = document.getElementById("newItemQuantity").value.trim()
-  const unit = document.getElementById("newItemUnit").value.trim()
+  const unit = document.getElementById("newItemUnit").value
 
   if (!name || !quantity || !unit) {
     showErrorMessage("Please fill in all item fields")
@@ -615,6 +630,22 @@ function setupMobileNotification() {
     btn.addEventListener("click", () => {
       showSuccessMessage("You have 3 pending notifications!")
     })
+  }
+}
+
+// Toggle Add Item Form
+function toggleAddItemForm() {
+  const formContainer = document.getElementById("addItemFormContainer")
+  const toggleIcon = document.getElementById("addItemToggleIcon")
+
+  if (formContainer.classList.contains("show")) {
+    formContainer.classList.remove("show")
+    toggleIcon.classList.remove("fa-chevron-up")
+    toggleIcon.classList.add("fa-chevron-down")
+  } else {
+    formContainer.classList.add("show")
+    toggleIcon.classList.remove("fa-chevron-down")
+    toggleIcon.classList.add("fa-chevron-up")
   }
 }
 

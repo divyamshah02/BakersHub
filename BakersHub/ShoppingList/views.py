@@ -33,7 +33,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
         elif month and year:
             qs = qs.filter(created_at__month=month, created_at__year=year)
 
-        serializer = ShoppingListSerializer(qs, many=True)
+        serializer = ShoppingListSerializer(qs[::-1], many=True)
         return Response({
             "success": True,
             "user_not_logged_in": False,
@@ -130,10 +130,10 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
         created_from = request.query_params.get("created_from")
         created_to = request.query_params.get("created_to")
 
-        qs = ShoppingListItem.objects.all()
+        qs = ShoppingListItem.objects.filter(shopping_list__list_id=list_id, is_active=True)
 
-        if list_id:
-            qs = qs.filter(shopping_list__list_id=list_id)
+        # if list_id:
+        #     qs = qs.filter(shopping_list__list_id=list_id)
         if is_bought is not None:
             qs = qs.filter(is_bought=(is_bought.lower() == "true"))
         if created_from and created_to:
@@ -203,6 +203,36 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
 
     @handle_exceptions
     @check_authentication()
+    def partial_update(self, request, pk=None):
+        try:
+            shopping_list_item = ShoppingListItem.objects.get(pk=pk, is_active=True)
+        except ShoppingListItem.DoesNotExist:
+            return Response({
+                "success": False,
+                "user_not_logged_in": False,
+                "user_unauthorized": False,
+                "data": None,
+                "error": "shopping_list_item not found."
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        is_bought = request.data.get('is_bought')
+        bought_amount = request.data.get('bought_amount')
+        if is_bought is True:
+            shopping_list_item.is_bought = is_bought
+            shopping_list_item.bought_amount = bought_amount
+            shopping_list_item.save()
+
+        serializer = ShoppingListItemSerializer(shopping_list_item)
+        return Response({
+            "success": True,
+            "user_not_logged_in": False,
+            "user_unauthorized": False,
+            "data": serializer.data,
+            "error": None
+        }, status=status.HTTP_200_OK)
+
+    @handle_exceptions
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             item = ShoppingListItem.objects.get(pk=pk)
@@ -215,7 +245,8 @@ class ShoppingListItemViewSet(viewsets.ViewSet):
                 "error": "Item not found"
             }, status=status.HTTP_404_NOT_FOUND)
 
-        item.delete()
+        item.is_active = False
+        item.save()
         return Response({
             "success": True,
             "user_not_logged_in": False,

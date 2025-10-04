@@ -41,7 +41,9 @@ class ShoppingListItem(models.Model):
 
     is_bought = models.BooleanField(default=False)
     bought_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # if bought
+    
     created_at = models.DateTimeField(default=timezone.now)
+    is_active = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
         if not self.item_id:
