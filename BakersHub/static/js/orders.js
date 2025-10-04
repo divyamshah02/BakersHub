@@ -21,15 +21,20 @@ function getUserId() {
 const bootstrap = window.bootstrap
 
 // Initialize Orders Page
-async function initOrders(order_url_param, category_url_param, user_profile_url_param, csrf_token_param, user_id_param=null) {
+async function initOrders(
+  order_url_param,
+  category_url_param,
+  user_profile_url_param,
+  csrf_token_param,
+  user_id_param = null,
+) {
   order_url = order_url_param
   category_url = category_url_param
   user_profile_url = user_profile_url_param
   csrf_token = csrf_token_param
   if (user_id_param == null) {
     await getUserInfo()
-  }
-  else {
+  } else {
     userId = user_id_param
   }
   await loadCategories()
@@ -60,7 +65,6 @@ async function loadOrders() {
 
   if (success && response.success) {
     ordersData = response.data
-    // displayedOrdersCount = 0 // Reset displayed count
     const ordersGrid = document.getElementById("ordersGrid")
     ordersGrid.innerHTML = ""
     if (displayedOrdersCount > ORDERS_PER_PAGE) {
@@ -71,6 +75,7 @@ async function loadOrders() {
     }
     updateLoadMoreButton()
     updateTotalOrdersCount(ordersData.length)
+    loadOrdersSummary()
   } else {
     showErrorMessage(response.error || "Failed to load orders")
   }
@@ -102,10 +107,6 @@ function renderOrders(orders) {
     `
     return
   }
-
-  // if (displayedOrdersCount <= ORDERS_PER_PAGE) {
-  //   ordersGrid.innerHTML = ""
-  // }
 
   const orderCards = orders
     .map((order, index) => {
@@ -243,7 +244,7 @@ async function addOrder() {
     items: items,
   }
 
-  const [success, response] = await callApi("POST", "${order_url}", orderData, csrf_token)
+  const [success, response] = await callApi("POST", order_url, orderData, csrf_token)
 
   if (success && response.success) {
     await loadOrders()
@@ -413,19 +414,14 @@ async function toggleOrderStatus(orderId) {
 
   const newStatus = order.status === "pending" ? "completed" : "pending"
 
-  const [success, response] = await callApi(
-    "PATCH",
-    `${order_url}${orderId}/`,
-    { status: newStatus },
-    csrf_token,
-  )
+  const [success, response] = await callApi("PATCH", `${order_url}${orderId}/`, { status: newStatus }, csrf_token)
 
   if (success && response.success) {
     // await loadOrders()
-    let status_badge = document.getElementById(`status-badge-${orderId}`)
+    const status_badge = document.getElementById(`status-badge-${orderId}`)
     status_badge.className = `badge bg-${getStatusColor(newStatus)}`
     status_badge.innerHTML = `${capitalizeFirst(newStatus)}`
-    ordersData.find(o => o.id == orderId).status = newStatus;
+    ordersData.find((o) => o.id == orderId).status = newStatus
     showSuccessMessage(`Order status updated to ${newStatus}!`)
   } else {
     showErrorMessage(response.error || "Failed to update order status")
@@ -462,10 +458,7 @@ function filterOrders() {
 
     const matchesStatus = !statusFilter || order.status === statusFilter
 
-    // order.delivery = "2025-09-30T22:53:00+05:30"
-    // const orderDate = order.delivery.split(" ")[0]
-    const orderDate = new Date(order.delivery).toLocaleDateString("en-CA");
-    // dateFilter = "2025-10-04"
+    const orderDate = new Date(order.delivery).toLocaleDateString("en-CA")
     const matchesDate = !dateFilter || orderDate === dateFilter
 
     return matchesSearch && matchesStatus && matchesDate
@@ -481,6 +474,7 @@ function filterOrders() {
   const originalData = ordersData
   ordersData = filtered
   updateLoadMoreButton()
+  loadOrdersSummary()
   ordersData = originalData
 }
 
@@ -519,11 +513,11 @@ function addOrderItem() {
   const container = document.getElementById("orderItemsContainer")
   const newRow = document.createElement("div")
   newRow.className = "order-item-row mb-2 p-3 border rounded"
-  let total_rows = document.querySelectorAll('.order-item-row').length
+  const total_rows = document.querySelectorAll(".order-item-row").length
   newRow.innerHTML = `
     <div class="row g-2">
       <div class="col-12 col-md-3">
-          <label class="form-label" style="font-size: 12px;">${total_rows+1}) Product Name</label>
+          <label class="form-label" style="font-size: 12px;">${total_rows + 1}) Product Name</label>
           <input type="text" class="form-control item-product" placeholder="Product" required>
       </div>
       <div class="col-6 col-md-2">
@@ -579,15 +573,15 @@ function createEditOrderItemRow(item = null, index = null) {
   const newRow = document.createElement("div")
   newRow.className = "order-item-row mb-2 p-3 border rounded"
   if (index == null) {
-    index = document.querySelectorAll('.order-item-row').length - 1
+    index = document.querySelectorAll(".order-item-row").length - 1
   }
   newRow.innerHTML = `
     <div class="row g-2">
       <div class="col-12 col-md-3">
-        <label class="form-label" style="font-size: 12px;">${index+1}) Product Name</label>
+        <label class="form-label" style="font-size: 12px;">${index + 1}) Product Name</label>
         <input type="text" class="form-control item-product" placeholder="Product" value="${item?.product || ""}" required>
         <input type="hidden" class="item-id" value="${item?.id || ""}" required>
-        <input type="hidden" class="item-is_active" value="${item?.is_active == null ? 'true' : item.is_active}" required>
+        <input type="hidden" class="item-is_active" value="${item?.is_active == null ? "true" : item.is_active}" required>
       </div>
       <div class="col-6 col-md-2">
         <label class="form-label" style="font-size: 12px;">Category</label>
@@ -639,20 +633,18 @@ function removeEditOrderItem(button) {
   if (container.children.length > 1) {
     // button.closest(".order-item-row").remove()
 
-    const row = button.closest(".order-item-row"); // Find the row of the clicked delete button
-    const isActiveInput = row.querySelector(".item-is_active"); // Get the is_active input for this row
+    const row = button.closest(".order-item-row") // Find the row of the clicked delete button
+    const isActiveInput = row.querySelector(".item-is_active") // Get the is_active input for this row
 
     // Set is_active to false
-    isActiveInput.value = "false"; 
+    isActiveInput.value = "false"
 
     // Hide the row instead of removing it
-    row.style.display = "none";
-
+    row.style.display = "none"
   } else {
     showErrorMessage("At least one item is required")
   }
 }
-
 
 function loadMoreOrders() {
   const nextBatch = ordersData.slice(displayedOrdersCount, displayedOrdersCount + ORDERS_PER_PAGE)
@@ -764,4 +756,28 @@ function updateTotalOrdersCount(count) {
   if (totalOrdersCount) {
     totalOrdersCount.textContent = count
   }
+}
+
+function loadOrdersSummary() {
+  let totalAmount = 0
+  let pendingCount = 0
+  let completedCount = 0
+
+  ordersData.forEach((order) => {
+    // Calculate total amount for this order
+    const orderTotal = order.items.reduce((sum, item) => sum + Number.parseFloat(item.price || 0), 0)
+    totalAmount += orderTotal
+
+    // Count by status
+    if (order.status === "pending") {
+      pendingCount++
+    } else if (order.status === "completed") {
+      completedCount++
+    }
+  })
+
+  // Update summary cards
+  document.getElementById("totalOrdersAmount").textContent = `₹${totalAmount.toFixed(2)}`
+  document.getElementById("pendingOrdersCount").textContent = pendingCount
+  document.getElementById("completedOrdersCount").textContent = completedCount
 }

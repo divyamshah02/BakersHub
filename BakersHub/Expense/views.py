@@ -13,7 +13,7 @@ from utils.decorators import handle_exceptions, check_authentication   # using y
 class ExpenseViewSet(viewsets.ViewSet):
     
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def list(self, request):
         user_id = request.query_params.get("user_id")
         expenses = Expense.objects.filter(is_active=True)
@@ -41,7 +41,7 @@ class ExpenseViewSet(viewsets.ViewSet):
         if month and year:
             expenses = expenses.filter(created_at__month=month, created_at__year=year)
 
-        serializer = ExpenseSerializer(expenses, many=True)
+        serializer = ExpenseSerializer(expenses[::-1], many=True)
         return Response({
             "success": True,
             "user_not_logged_in": False,
@@ -51,7 +51,7 @@ class ExpenseViewSet(viewsets.ViewSet):
         }, status=status.HTTP_200_OK)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def create(self, request):
         serializer = ExpenseSerializer(data=request.data)
         if serializer.is_valid():
@@ -72,7 +72,7 @@ class ExpenseViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def update(self, request, pk=None):
         try:
             expense = Expense.objects.get(pk=pk, is_active=True)
@@ -104,7 +104,7 @@ class ExpenseViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def partial_update(self, request, pk=None):
         try:
             expense = Expense.objects.get(pk=pk, is_active=True)
@@ -136,7 +136,7 @@ class ExpenseViewSet(viewsets.ViewSet):
         }, status=status.HTTP_400_BAD_REQUEST)
 
     @handle_exceptions
-    @check_authentication
+    @check_authentication()
     def delete(self, request, pk=None):
         try:
             expense = Expense.objects.get(pk=pk, is_active=True)
