@@ -1,3 +1,6 @@
 Orders - 
     - After filtering the load more is not behaving perfect 
     - Category should be dynamic
+
+Add Tutorials
+Add baker's contact directory so we can show them pas customer names and number

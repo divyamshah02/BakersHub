@@ -27,7 +27,7 @@ class User(AbstractUser):
     
     name = models.CharField(max_length=255)
     contact_number = models.CharField(max_length=15, unique=True)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(null=True, blank=True)
 
     company_name = models.CharField(max_length=255, null=True, blank=True)
     company_city = models.CharField(max_length=60, null=True, blank=True)
@@ -54,7 +54,7 @@ class User(AbstractUser):
 
 
     USERNAME_FIELD = 'contact_number'
-    REQUIRED_FIELDS = ['email', 'role', 'username']
+    REQUIRED_FIELDS = ['role', 'username']
 
     def __str__(self):
         return f"{self.name} ({self.role})"
@@ -71,6 +71,7 @@ class User(AbstractUser):
 
             new_user_id = generate_user_id(role_code=role_codes[self.role])
             self.user_id = new_user_id
+            self.username = new_user_id
 
         # Handle plan logic
         if self.plan_type == 'free' and self.free_plan_start and self.free_plan_day:
