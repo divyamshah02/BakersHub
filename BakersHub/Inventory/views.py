@@ -11,7 +11,7 @@ class InventoryViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication
     def list(self, request):
-        user_id = request.query_params.get("user_id")
+        user_id = request.user.user_id
         inventory_id = request.query_params.get("inventory_id")
         created_from = request.query_params.get("created_from")
         created_to = request.query_params.get("created_to")

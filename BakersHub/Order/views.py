@@ -12,16 +12,7 @@ class OrderViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def list(self, request):
-        user_id = request.query_params.get('user_id')
-        if not user_id:
-            return Response({
-                "success": False,
-                "user_not_logged_in": False,
-                "user_unauthorized": False,
-                "data": None,
-                "error": "Missing user_id."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+        user_id = request.user.user_id
         orders = Order.objects.filter(user_id=user_id, is_active=True)
 
         # Filters
@@ -66,7 +57,7 @@ class OrderViewSet(viewsets.ViewSet):
         status_val = data.get('status', 'pending')
         items = data.get('items', [])
 
-        if not all([user_id, customer_name, delivery, items]):
+        if not all([customer_name, delivery, items]):
             return Response({
                 "success": False,
                 "user_not_logged_in": False,
@@ -124,7 +115,8 @@ class OrderViewSet(viewsets.ViewSet):
     @check_authentication()
     def update(self, request, pk=None):
         try:
-            order = Order.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            order = Order.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Order.DoesNotExist:
             return Response({
                 "success": False,
@@ -135,8 +127,7 @@ class OrderViewSet(viewsets.ViewSet):
             }, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
-        user_id = request.user.user_id
-        
+
         order.customer_name = data.get('customer_name', order.customer_name)
         order.customer_number = data.get('customer_number', order.customer_number)
         order.delivery = data.get('delivery', order.delivery)
@@ -197,7 +188,8 @@ class OrderViewSet(viewsets.ViewSet):
     @check_authentication()
     def partial_update(self, request, pk=None):
         try:
-            order = Order.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            order = Order.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Order.DoesNotExist:
             return Response({
                 "success": False,
@@ -225,7 +217,8 @@ class OrderViewSet(viewsets.ViewSet):
     @check_authentication()
     def delete(self, request, pk=None):
         try:
-            order = Order.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            order = Order.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Order.DoesNotExist:
             return Response({
                 "success": False,
@@ -255,16 +248,7 @@ class CategoryViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def list(self, request):
-        user_id = request.query_params.get('user_id')
-        if not user_id:
-            return Response({
-                "success": False,
-                "user_not_logged_in": False,
-                "user_unauthorized": False,
-                "data": None,
-                "error": "Missing user_id."
-            }, status=status.HTTP_400_BAD_REQUEST)
-
+        user_id = request.user.user_id
         categories = Category.objects.filter(user_id=user_id, is_active=True)
         serializer = CategorySerializer(categories, many=True)
         return Response({
@@ -278,7 +262,7 @@ class CategoryViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def create(self, request):
-        user_id = request.data.get('user_id')
+        user_id = request.user.user_id
         category_name = request.data.get('category')
         if not all([user_id, category_name]):
             return Response({
@@ -307,7 +291,8 @@ class CategoryViewSet(viewsets.ViewSet):
     @check_authentication()
     def update(self, request, pk=None):
         try:
-            category = Category.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            category = Category.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Category.DoesNotExist:
             return Response({
                 "success": False,
@@ -335,7 +320,8 @@ class CategoryViewSet(viewsets.ViewSet):
     @check_authentication()
     def delete(self, request, pk=None):
         try:
-            category = Category.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            category = Category.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Category.DoesNotExist:
             return Response({
                 "success": False,

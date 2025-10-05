@@ -5,7 +5,6 @@ let displayedExpensesCount = 0 // Declare displayedExpensesCount variable
 let expense_url = null
 let user_profile_url = null
 let csrf_token = null
-let userId = null
 let userData = null // Declare userData variable
 
 const EXPENSES_PER_PAGE = 6 // Number of expenses to load per page
@@ -19,12 +18,6 @@ async function initExpenses(expense_url_param, user_profile_url_param, csrf_toke
   user_profile_url = user_profile_url_param
   csrf_token = csrf_token_param
 
-  if (user_id_param == null) {
-    await getUserInfo()
-  } else {
-    userId = user_id_param
-  }
-
   await loadExpenses()
   setupFilters()
   setupFAB()
@@ -36,7 +29,6 @@ async function getUserInfo() {
   const [success, response] = await callApi("GET", `${user_profile_url}`, null, csrf_token)
   if (success && response.success) {
     userData = response.data
-    userId = userData.user.user_id
   } else {
     showErrorMessage(response.error || "Failed to get user info")
   }
@@ -44,12 +36,7 @@ async function getUserInfo() {
 
 // Load Expenses
 async function loadExpenses() {
-  if (!userId) {
-    showErrorMessage("User not logged in. Please log in.")
-    return
-  }
-
-  const [success, response] = await callApi("GET", `${expense_url}?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${expense_url}`, null, csrf_token)
 
   if (success && response.success) {
     expensesData = response.data
@@ -205,7 +192,6 @@ async function addExpense() {
   }
 
   const formData = new FormData()
-  formData.append("user_id", userId)
   formData.append("expense_name", expenseName)
   formData.append("expense_category", expenseCategory)
   formData.append("expense_amount", expenseAmount)
@@ -276,7 +262,6 @@ async function saveExpenseEdit() {
   }
 
   const formData = new FormData()
-  formData.append("user_id", userId)
   formData.append("expense_name", expenseName)
   formData.append("expense_category", expenseCategory)
   formData.append("expense_amount", expenseAmount)

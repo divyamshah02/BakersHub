@@ -15,7 +15,7 @@ class ProductViewSet(viewsets.ViewSet):
     @check_authentication
     def list(self, request):
         product_id = request.query_params.get("product_id")
-        user_id = request.query_params.get("user_id")
+        user_id = request.user.user_id
         category = request.query_params.get("category")
         name = request.query_params.get("product_name")
 

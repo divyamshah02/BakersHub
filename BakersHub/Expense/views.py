@@ -15,12 +15,8 @@ class ExpenseViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def list(self, request):
-        user_id = request.query_params.get("user_id")
-        expenses = Expense.objects.filter(is_active=True)
-        
-        # 🔎 Filters
-        if user_id:
-            expenses = expenses.filter(user_id=user_id)
+        user_id = request.user.user_id
+        expenses = Expense.objects.filter(user_id=user_id, is_active=True)
 
         expense_name = request.query_params.get("expense_name")
         if expense_name:
@@ -53,7 +49,9 @@ class ExpenseViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def create(self, request):
-        serializer = ExpenseSerializer(data=request.data)
+        data = request.data.copy()
+        data['user_id'] = request.user.user_id
+        serializer = ExpenseSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -75,7 +73,8 @@ class ExpenseViewSet(viewsets.ViewSet):
     @check_authentication()
     def update(self, request, pk=None):
         try:
-            expense = Expense.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            expense = Expense.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Expense.DoesNotExist:
             return Response({
                 "success": False,
@@ -107,7 +106,8 @@ class ExpenseViewSet(viewsets.ViewSet):
     @check_authentication()
     def partial_update(self, request, pk=None):
         try:
-            expense = Expense.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            expense = Expense.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Expense.DoesNotExist:
             return Response({
                 "success": False,
@@ -139,7 +139,8 @@ class ExpenseViewSet(viewsets.ViewSet):
     @check_authentication()
     def delete(self, request, pk=None):
         try:
-            expense = Expense.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            expense = Expense.objects.get(pk=pk, user_id=user_id, is_active=True)
         except Expense.DoesNotExist:
             return Response({
                 "success": False,

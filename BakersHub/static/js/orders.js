@@ -6,16 +6,9 @@ let order_url = null
 let category_url = null
 let user_profile_url = null
 let csrf_token = null
-let userId = null
 
 let displayedOrdersCount = 0
 const ORDERS_PER_PAGE = 3 // Change this value to load different number of orders (e.g., 5, 10, 50)
-
-// Utility Functions
-function getUserId() {
-  // Placeholder implementation
-  return localStorage.getItem("userId")
-}
 
 // Import Bootstrap
 const bootstrap = window.bootstrap
@@ -25,18 +18,13 @@ async function initOrders(
   order_url_param,
   category_url_param,
   user_profile_url_param,
-  csrf_token_param,
-  user_id_param = null,
+  csrf_token_param
 ) {
   order_url = order_url_param
   category_url = category_url_param
   user_profile_url = user_profile_url_param
   csrf_token = csrf_token_param
-  if (user_id_param == null) {
-    await getUserInfo()
-  } else {
-    userId = user_id_param
-  }
+  
   await loadCategories()
   await loadOrders()
   setupFilters()
@@ -48,7 +36,6 @@ async function getUserInfo() {
   const [success, response] = await callApi("GET", `${user_profile_url}`, null, csrf_token)
   if (success && response.success) {
     userData = response.data
-    userId = userData.user.user_id
   } else {
     showErrorMessage(response.error || "Failed to user info")
   }
@@ -56,12 +43,7 @@ async function getUserInfo() {
 
 // Load Orders
 async function loadOrders() {
-  if (!userId) {
-    showErrorMessage("User not logged in. Please log in.")
-    return
-  }
-
-  const [success, response] = await callApi("GET", `${order_url}?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${order_url}`, null, csrf_token)
 
   if (success && response.success) {
     ordersData = response.data
@@ -83,9 +65,7 @@ async function loadOrders() {
 
 // Load Categories
 async function loadCategories() {
-  if (!userId) return
-
-  const [success, response] = await callApi("GET", `${category_url}?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${category_url}`, null, csrf_token)
 
   if (success && response.success) {
     categoriesData = response.data
@@ -765,7 +745,13 @@ function loadOrdersSummary() {
 
   ordersData.forEach((order) => {
     // Calculate total amount for this order
-    const orderTotal = order.items.reduce((sum, item) => sum + Number.parseFloat(item.price || 0), 0)
+    const orderTotal = order.items.reduce((sum, item) => {
+      console.log(item)
+      return order.status === 'completed' 
+        ? sum + Number.parseFloat(item.price || 0)
+        : sum
+    }, 0)
+
     totalAmount += orderTotal
 
     // Count by status

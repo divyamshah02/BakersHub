@@ -14,7 +14,7 @@ class ShoppingListViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def list(self, request):
-        user_id = request.query_params.get("user_id")
+        user_id = request.user.user_id
         list_id = request.query_params.get("list_id")
         created_from = request.query_params.get("created_from")
         created_to = request.query_params.get("created_to")
@@ -45,7 +45,9 @@ class ShoppingListViewSet(viewsets.ViewSet):
     @handle_exceptions
     @check_authentication()
     def create(self, request):
-        serializer = ShoppingListSerializer(data=request.data)
+        data = request.data.copy()
+        data['user_id'] = request.user.user_id
+        serializer = ShoppingListSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             return Response({
@@ -67,7 +69,8 @@ class ShoppingListViewSet(viewsets.ViewSet):
     @check_authentication()
     def update(self, request, pk=None):
         try:
-            shopping_list = ShoppingList.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            shopping_list = ShoppingList.objects.get(pk=pk, user_id=user_id, is_active=True)
         except ShoppingList.DoesNotExist:
             return Response({
                 "success": False,
@@ -99,7 +102,8 @@ class ShoppingListViewSet(viewsets.ViewSet):
     @check_authentication()
     def delete(self, request, pk=None):
         try:
-            shopping_list = ShoppingList.objects.get(pk=pk, is_active=True)
+            user_id = request.user.user_id
+            shopping_list = ShoppingList.objects.get(pk=pk, user_id=user_id, is_active=True)
         except ShoppingList.DoesNotExist:
             return Response({
                 "success": False,

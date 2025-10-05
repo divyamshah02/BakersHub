@@ -5,7 +5,6 @@ let allShoppingItems = []
 let shoppinglist_url = null
 let shoppinglistitem_url = null
 let csrf_token = null
-let userId = null
 
 let displayedListsCount = 0
 const LISTS_PER_PAGE = 6
@@ -22,13 +21,11 @@ const bootstrap = window.bootstrap
 async function initShopping(
   shoppinglist_url_param,
   shoppinglistitem_url_param,
-  csrf_token_param,
-  user_id_param = null,
+  csrf_token_param
 ) {
   shoppinglist_url = shoppinglist_url_param
   shoppinglistitem_url = shoppinglistitem_url_param
   csrf_token = csrf_token_param
-  userId = user_id_param
 
   await loadShoppingLists()
   setupFilters()
@@ -38,12 +35,7 @@ async function initShopping(
 
 // Load Shopping Lists
 async function loadShoppingLists() {
-  if (!userId) {
-    showErrorMessage("User not logged in. Please log in.")
-    return
-  }
-
-  const [success, response] = await callApi("GET", `${shoppinglist_url}?user_id=${userId}`, null, csrf_token)
+  const [success, response] = await callApi("GET", `${shoppinglist_url}`, null, csrf_token)
 
   if (success && response.success) {
     shoppingListsData = response.data
@@ -146,7 +138,6 @@ async function addShoppingList() {
   }
 
   const listData = {
-    user_id: userId,
     name: name,
   }
 
@@ -194,7 +185,7 @@ async function saveShoppingListEdit() {
     name: name,
   }
 
-  const [success, response] = await callApi("PATCH", `${shoppinglist_url}${listId}/`, listData, csrf_token)
+  const [success, response] = await callApi("PUT", `${shoppinglist_url}${listId}/`, listData, csrf_token)
 
   if (success && response.success) {
     await loadShoppingLists()
