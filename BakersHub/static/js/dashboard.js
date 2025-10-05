@@ -14,6 +14,7 @@ async function initDashboard(dashboard_url_param, csrf_token_param) {
   csrf_token = csrf_token_param
 
   await loadDashboardData()
+  setupFAB()
 }
 
 // Load Dashboard Data
@@ -28,7 +29,7 @@ async function loadDashboardData() {
 
   if (success && response.success) {
     dashboardData = response.data
-    console.log(dashboardData)
+    document.getElementById('month-content').innerText = dashboardData.period_label
     updateKPIs()
     loadRecentOrders()
     loadRecentExpenses()
@@ -71,7 +72,7 @@ function updateKPIs() {
 // Load Recent Orders
 function loadRecentOrders() {
   const container = document.getElementById("recentOrdersContainer")
-
+  container.innerHTML = ''
   if (!dashboardData || !dashboardData.order_data || dashboardData.order_data.length === 0) {
     container.innerHTML = `
       <div class="text-center py-4">
@@ -153,21 +154,6 @@ function loadRecentOrders() {
           <span class="badge bg-${getStatusColor(order.status)}" id="status-badge-${order.id}">
             ${capitalizeFirst(order.status)}
           </span>
-          <div class="order-actions">
-        ${
-          order.status === "pending"
-            ? `<button class="btn-action btn-status" onclick="toggleOrderStatus(${order.id})" title="Toggle Status">
-       <i class="fas fa-check-circle"></i>
-     </button>`
-            : ""
-        }
-            <button class="btn-action btn-edit" onclick="editOrder(${order.id})" title="Edit Order">
-              <i class="fas fa-edit"></i>
-            </button>
-            <button class="btn-action btn-delete" onclick="deleteOrder(${order.id})" title="Delete Order">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
         </div>
       </div>
     `
@@ -195,7 +181,7 @@ function getStatusColor(status) {
 // Load Recent Expenses
 function loadRecentExpenses() {
   const container = document.getElementById("recentExpensesContainer")
-
+  container.innerHTML = ''
   if (!dashboardData || !dashboardData.expenses_data || dashboardData.expenses_data.length === 0) {
     container.innerHTML = `
       <div class="text-center py-4">
@@ -206,23 +192,43 @@ function loadRecentExpenses() {
     return
   }
 
-  const expenses = dashboardData.expenses_data.slice(0, 5)
+  const expenses = dashboardData.expenses_data
 
   container.innerHTML = expenses
     .map((expense) => {
+      const expenseIndex = expenses.findIndex((e) => e.id === expense.id)
       return `
-      <div class="expense-card mb-3">
-        <div class="expense-header">
-          <span class="expense-category">${getCategoryLabel(expense.expense_category)}</span>
+      <div class="expense-card fade-in">
+          <div class="expense-header">
+            <div class="row align-items-center">
+              <div class="col-12 d-flex align-items-center">
+                <span class="expense-category">
+                  ${expenses.length - expenseIndex}) ${getCategoryLabel(expense.expense_category)}
+                </span>
+              </div>
+            </div>                      
+          </div>
+          <!-- Expense Name -->
+          <div class="expense-description">${expense.expense_name}</div>
+
+          <!-- ✅ Date + Qty in one line -->
+          <div class="expense-meta">
+            <span><i class="fas fa-box"></i> ${expense.expense_quantity} ${expense.expense_unit}</span>
+            <span><i class="fas fa-calendar-alt"></i> ${formatDate(expense.created_at)}</span>
+          </div>
+
+          <!-- Extra Note -->
+          ${expense.extra_note ? `<div class="expense-date"><i class="fas fa-sticky-note"></i> ${expense.extra_note}</div>` : ""}
+
+          <!-- ✅ View Bill as full-width outline button -->
+          ${
+            expense.expense_bill
+              ? `<a onclick="openDoc('${expense.expense_bill}', 'Bill')" class="view-bill-btn">View Bill</a>`
+              : ""
+          }
+
+          <div class="expense-amount">₹${Number.parseFloat(expense.expense_amount).toFixed(2)}</div>    
         </div>
-        <div class="expense-description">${expense.expense_name}</div>
-        <div class="expense-meta">
-          <span><i class="fas fa-box"></i> ${expense.expense_quantity} ${expense.expense_unit}</span>
-          <span><i class="fas fa-calendar-alt"></i> ${formatDate(expense.created_at)}</span>
-        </div>
-        ${expense.extra_note ? `<div class="expense-date"><i class="fas fa-sticky-note"></i> ${expense.extra_note}</div>` : ""}
-        <div class="expense-amount">₹${Number.parseFloat(expense.expense_amount).toFixed(2)}</div>
-      </div>
     `
     })
     .join("")
@@ -358,4 +364,23 @@ function showErrorMessage(message) {
       alert.remove()
     }
   }, 3000)
+}
+
+function setupFAB() {
+  const mainFab = document.getElementById("mainFab")
+  const fabMenu = document.getElementById("fabMenu")
+
+  if (mainFab && fabMenu) {
+    mainFab.addEventListener("click", () => {
+      mainFab.classList.toggle("active")
+      fabMenu.classList.toggle("active")
+    })
+
+    document.addEventListener("click", (e) => {
+      if (!e.target.closest(".fab-container")) {
+        mainFab.classList.remove("active")
+        fabMenu.classList.remove("active")
+      }
+    })
+  }
 }

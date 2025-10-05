@@ -299,12 +299,33 @@ class UserProfileViewSet(viewsets.ViewSet):
         Update user profile information
         """
         user_id = request.user.user_id
-        data = request.data
+        data = request.data.copy()
+        data['user_id'] = user_id
+        
         user_pk = pk
         
         try:
             user = User.objects.get(user_id=user_id)
+            data['role'] = user.role
+            data['contact_number'] = user.contact_number
             
+            serializer = UserSerializer(user, data=data, partial=False)
+            if serializer.is_valid():
+                serializer.save()
+                return Response({
+                    "success": True,
+                    "user_not_logged_in": False,
+                    "user_unauthorized": False,
+                    "data": serializer.data,
+                    "error": None
+                }, status=status.HTTP_200_OK)
+            return Response({
+                "success": False,
+                "user_not_logged_in": False,
+                "user_unauthorized": False,
+                "data": None,
+                "error": serializer.errors
+            }, status=status.HTTP_400_BAD_REQUEST)
             # Update allowed fields
             if 'first_name' in data:
                 user.first_name = data['first_name']
