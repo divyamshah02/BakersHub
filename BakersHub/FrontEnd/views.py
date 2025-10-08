@@ -54,6 +54,14 @@ def check_authentication(required_role=None):
     return decorator
 
 
+class HomeViewSet(viewsets.ViewSet):
+
+    @handle_exceptions
+    @check_authentication()
+    def list(self, request):
+        return render(request, 'website/index.html')
+
+
 class AppViewSet(viewsets.ViewSet):
 
     @handle_exceptions

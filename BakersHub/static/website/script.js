@@ -192,7 +192,7 @@ if (waitlistForm) {
     }
 
     // Log form data (for testing)
-    console.log("[v0] Waitlist submission:", formData)
+    console.log("Waitlist submission:", formData)
 
     // Show success message
     alert("🎉 Thank you for joining the waitlist! We'll be in touch soon.")
@@ -218,7 +218,7 @@ if (waitlistForm) {
             waitlistForm.reset();
         })
         .catch(error => {
-            console.error('[v0] Error:', error);
+            console.error('Error:', error);
             alert('Something went wrong. Please try again.');
         });
         */
@@ -501,7 +501,7 @@ const addExpenseForm = document.getElementById("addExpenseForm")
 if (addOrderForm) {
   addOrderForm.addEventListener("submit", (e) => {
     e.preventDefault()
-    console.log("[v0] Order form submitted")
+    console.log("Order form submitted")
     alert("🎉 Order added successfully! This is a demo - in the real app, this would save to your database.")
     addOrderForm.reset()
   })
@@ -510,7 +510,7 @@ if (addOrderForm) {
 if (addExpenseForm) {
   addExpenseForm.addEventListener("submit", (e) => {
     e.preventDefault()
-    console.log("[v0] Expense form submitted")
+    console.log("Expense form submitted")
     alert("💰 Expense added successfully! This is a demo - in the real app, this would save to your database.")
     addExpenseForm.reset()
   })
@@ -756,7 +756,7 @@ orderStatusButtons.forEach((btn) => {
       const orderItem = button.closest(".order-item")
       if (orderItem) {
         const customerName = orderItem.querySelector(".order-customer-name")?.textContent || "Order"
-        console.log(`[v0] ${customerName} marked as completed`)
+        console.log(`${customerName} marked as completed`)
       }
     } else if (button.classList.contains("completed")) {
       // Change back to pending
@@ -1308,12 +1308,12 @@ explorerHotspots.forEach((hotspot) => {
   })
 })
 
-console.log("[v0] Fixed Before/After Slider: ✓")
-console.log("[v0] Baker Simulation with Auto-Fill: ✓")
-console.log("[v0] 3D Card Flip Showcase: ✓")
-console.log("[v0] Animated Infographic: ✓")
-console.log("[v0] Interactive Feature Explorer: ✓")
-console.log("[v0] All new innovative features loaded!")
+console.log("Fixed Before/After Slider: ✓")
+console.log("Baker Simulation with Auto-Fill: ✓")
+console.log("3D Card Flip Showcase: ✓")
+console.log("Animated Infographic: ✓")
+console.log("Interactive Feature Explorer: ✓")
+console.log("All new innovative features loaded!")
 
 // ============================================
 // ============================================
@@ -1513,24 +1513,3 @@ if (timelineSection) {
     }
   })
 }
-
-// ============================================
-// ============================================
-console.log("[v0] Fixed Before/After Slider: ✓")
-console.log("[v0] Baker Simulation with Auto-Fill: ✓")
-console.log("[v0] 3D Card Flip Showcase: ✓")
-console.log("[v0] Animated Infographic: ✓")
-console.log("[v0] Interactive Feature Explorer: ✓")
-console.log("[v0] Scroll Timeline: ✓")
-console.log("[v0] Updated ROI Calculator: ✓")
-console.log("[v0] All new innovative features loaded!")
-
-// ============================================
-// CONSOLE LOG FOR DEBUGGING
-// ============================================
-console.log("[v0] Bakers Hub landing page loaded successfully")
-console.log("[v0] All interactive features initialized")
-console.log("[v0] Parallax effects: ✓")
-console.log("[v0] Zoom animations: ✓")
-console.log("[v0] Interactive elements: ✓")
-console.log("[v0] Mobile optimizations: ✓")

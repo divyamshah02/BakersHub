@@ -17,7 +17,7 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
      <!-- Custom CSS  -->
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="/static/website/styles.css">
 </head>
 <body>
 
@@ -33,14 +33,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <!-- <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
                     <li class="nav-item"><a class="nav-link" href="#orders">Orders</a></li>
                     <li class="nav-item"><a class="nav-link" href="#expenses">Expenses</a></li>
                     <li class="nav-item"><a class="nav-link" href="#story">Story</a></li>
                     <li class="nav-item"><a class="nav-link" href="#waitlist">Join Waitlist</a></li>
                     <li class="nav-item"><a class="nav-link" href="#roi">ROI Calculator</a></li>
                     <li class="nav-item"><a class="nav-link" href="#pricing">Pricing</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#faq">FAQ</a></li> -->
                 </ul>
                 <a href="#waitlist" class="btn btn-primary ms-lg-3">Get Started</a>
             </div>
@@ -146,7 +146,182 @@
         </div>
     </section>
 
-     <!-- ========== ORDERS MANAGEMENT SECTION ==========  -->
+    <!-- ========== STORY SECTION ==========  -->
+    <section class="story-section" id="story">
+        <div class="container">
+             <!-- Section header  -->
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">Built for Bakers,<br><span class="gradient-text">By People Who Care</span></h2>
+            </div>
+
+             <!-- Story cards  -->
+            <div class="row g-4">
+                 <!-- Problem  -->
+                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
+                    <div class="story-card problem-card">
+                        <div class="story-icon">😰</div>
+                        <h3 class="story-title">The Problem</h3>
+                        <p class="story-text">
+                            Home bakers juggle WhatsApp messages, paper notes, and mental math. Orders get lost, expenses are forgotten, and profit calculations are guesswork.
+                        </p>
+                        <ul class="story-list">
+                            <li>Lost orders in chat threads</li>
+                            <li>No idea of real profit</li>
+                            <li>Forgotten ingredient costs</li>
+                            <li>Missed delivery deadlines</li>
+                        </ul>
+                    </div>
+                </div>
+
+                 <!-- Solution  -->
+                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
+                    <div class="story-card solution-card">
+                        <div class="story-icon">✨</div>
+                        <h3 class="story-title">The Solution</h3>
+                        <p class="story-text">
+                            Bakers Hub brings everything together. One beautiful app that handles orders, expenses, shopping lists, and notifications.
+                        </p>
+                        <ul class="story-list">
+                            <li>All orders in one place</li>
+                            <li>Real-time profit tracking</li>
+                            <li>Automatic expense logging</li>
+                            <li>Smart delivery reminders</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FEATURES SECTION ==========  -->
+<!-- ========== FEATURES SECTION ========== -->
+<section class="features-section" id="features">
+  <div class="container">
+    <!-- Section header -->
+    <div class="section-header text-center" data-aos="fade-up">
+      <h2 class="section-title">
+        Everything You Need,<br /><span class="gradient-text">Nothing You Don't</span>
+      </h2>
+      <p class="section-subtitle">Powerful features designed specifically for home bakers</p>
+    </div>
+
+    <!-- Bento grid -->
+    <div class="bento-grid">
+      
+      <!-- 🛒 Shopping List -->
+      <div class="bento-item bento-shopping" data-aos="fade-up">
+        <div class="bento-content">
+          <div class="bento-icon">🛒</div>
+          <h3 class="bento-title">Smart Shopping Lists</h3>
+          <p class="bento-description">Auto-generated lists. Check off items as you shop!</p>
+          
+          <div class="shopping-list">
+            <div class="shopping-item"><input type="checkbox" id="item1" class="shopping-checkbox"><label for="item1">Flour - 2kg</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item2" class="shopping-checkbox"><label for="item2">Butter - 500g</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item3" class="shopping-checkbox"><label for="item3">Chocolate - 1kg</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item4" class="shopping-checkbox"><label for="item4">Vanilla Extract - 100ml</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item5" class="shopping-checkbox"><label for="item5">Cake Box - 100Pc</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item6" class="shopping-checkbox"><label for="item6">Cake Board - 100Pc</label></div>
+            <div class="shopping-item"><input type="checkbox" id="item7" class="shopping-checkbox"><label for="item7">Spatula - 2</label></div>
+          </div>
+        </div>
+        <div class="bento-glow"></div>
+      </div>
+
+      <!-- 📅 Calendar -->
+      <div class="bento-item bento-calendar" data-aos="fade-up">
+        <div class="bento-content">
+          <div class="bento-icon">📅</div>
+          <h3 class="bento-title">Smart Calendar & Tasks</h3>
+          <p class="bento-description">Plan your baking schedule. Never miss a delivery!</p>
+          
+          <div class="mini-calendar">
+            <div class="calendar-header"><span>October 2025</span></div>
+            <div class="calendar-grid">
+              <div class="calendar-day">Mon</div>
+              <div class="calendar-day">Tue</div>
+              <div class="calendar-day">Wed</div>
+              <div class="calendar-day">Thu</div>
+              <div class="calendar-day">Fri</div>
+              <div class="calendar-day">Sat</div>
+              <div class="calendar-day">Sun</div>
+                <div class="calendar-date">1</div>
+                <div class="calendar-date">2</div>
+                <div class="calendar-date">3</div>
+                <div class="calendar-date">4</div>
+                <div class="calendar-date">5</div>
+                <div class="calendar-date">6</div>
+                <div class="calendar-date">7</div>
+                <div class="calendar-date has-event" data-event="Delivery: Divyam Shah">8</div>
+                <div class="calendar-date">9</div>
+                <div class="calendar-date has-event" data-event="Delivery: Priya's Order">10</div>
+                <div class="calendar-date">11</div>
+                <div class="calendar-date">12</div>
+                <div class="calendar-date">13</div>
+                <div class="calendar-date">14</div>
+                <div class="calendar-date">15</div>
+                <div class="calendar-date">16</div>
+                <div class="calendar-date">17</div>
+                <div class="calendar-date has-event" data-event="Delivery: Ronak's Order">18</div>
+                <div class="calendar-date">19</div>
+                <div class="calendar-date">20</div>
+                <div class="calendar-date">21</div>
+                <div class="calendar-date">22</div>
+                <div class="calendar-date">23</div>
+                <div class="calendar-date">24</div>
+                <div class="calendar-date">25</div>
+                <div class="calendar-date">26</div>
+                <div class="calendar-date">27</div>
+                <div class="calendar-date">28</div>
+                <div class="calendar-date">29</div>
+                <div class="calendar-date">30</div>
+                <div class="calendar-date">31</div>     
+            </div>
+
+            <div class="calendar-events">
+              <h6>This week</h6>
+              <div class="calendar-event"><span class="event-dot"></span><span>Oct 8: Delivery - Snehi Shah</span></div>
+              <div class="calendar-event"><span class="event-dot"></span><span>Oct 10: Delivery - Priya’s Order</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="bento-glow"></div>
+      </div>
+
+      <!-- 🔔 Notifications -->
+      <div class="bento-item bento-notifications" data-aos="fade-up">
+        <div class="bento-content">
+          <div class="bento-icon">🔔</div>
+          <h3 class="bento-title">Delivery Alerts</h3>
+          <p class="bento-description">Smart notifications</p>
+          <div class="notification-preview">
+            <div class="notification-badge">3</div>
+          </div>
+        </div>
+        <div class="bento-glow"></div>
+      </div>
+
+      <!-- 📊 Reports -->
+      <div class="bento-item bento-reports" data-aos="fade-up">
+        <div class="bento-content">
+          <div class="bento-icon">📊</div>
+          <h3 class="bento-title">Reports</h3>
+          <p class="bento-description">Business insights</p>
+          <div class="mini-chart">
+            <div class="chart-bar" style="height: 40%"></div>
+            <div class="chart-bar" style="height: 65%"></div>
+            <div class="chart-bar" style="height: 85%"></div>
+            <div class="chart-bar" style="height: 100%"></div>
+          </div>
+        </div>
+        <div class="bento-glow"></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+    <!-- ========== ORDERS MANAGEMENT SECTION ==========  -->
     <section class="orders-section" id="orders">
         <div class="container">
              <!-- Section header  -->
@@ -372,189 +547,57 @@
         </div>
     </section>
 
-     <!-- ========== FEATURES SECTION ==========  -->
-    <section class="features-section" id="features">
+    <!-- ========== BEFORE/AFTER INTERACTIVE SLIDER SECTION ========== -->
+    <!-- Added totally unique before/after comparison with draggable slider -->
+    <section class="before-after-section">
         <div class="container">
-             <!-- Section header  -->
+             <!-- Section header -->
             <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">Everything You Need,<br><span class="gradient-text">Nothing You Don't</span></h2>
-                <p class="section-subtitle">Powerful features designed specifically for home bakers</p>
+                <h2 class="section-title">Life Before vs After <span class="gradient-text">Bakers Hub</span></h2>
+                <p class="section-subtitle">Drag the slider to see the transformation</p>
             </div>
 
-             <!-- Bento grid  -->
-            <div class="bento-grid">
-                <!-- Feature 3: Interactive Shopping List -->
-                <div class="bento-item bento-medium" data-aos="fade-up">
-                    <div class="bento-content">
-                        <div class="bento-icon">🛒</div>
-                        <h3 class="bento-title">Smart Shopping Lists</h3>
-                        <p class="bento-description">Auto-generated lists. Check off items as you shop!</p>
-                        
-                         <!-- Interactive checklist -->
-                        <div class="shopping-list">
-                            <div class="shopping-item" data-checked="false">
-                                <input type="checkbox" id="item1" class="shopping-checkbox">
-                                <label for="item1">Flour - 2kg</label>
-                            </div>
-                            <div class="shopping-item" data-checked="false">
-                                <input type="checkbox" id="item2" class="shopping-checkbox">
-                                <label for="item2">Butter - 500g</label>
-                            </div>
-                            <div class="shopping-item" data-checked="false">
-                                <input type="checkbox" id="item3" class="shopping-checkbox">
-                                <label for="item3">Chocolate - 1kg</label>
-                            </div>
-                            <div class="shopping-item" data-checked="false">
-                                <input type="checkbox" id="item4" class="shopping-checkbox">
-                                <label for="item4">Vanilla Extract - 100ml</label>
+            <div class="before-after-container" data-aos="zoom-in">
+                <div class="before-after-wrapper" id="beforeAfterWrapper">
+                     <!-- Before side -->
+                    <div class="before-side" id="beforeSide">
+                        <div class="side-content">
+                            <h3>😰 Before Bakers Hub</h3>
+                            <div class="chaos-items">
+                                <div class="chaos-item">📱 Lost orders in WhatsApp</div>
+                                <div class="chaos-item">📝 Messy paper notes everywhere</div>
+                                <div class="chaos-item">🤯 No idea of real profit</div>
+                                <div class="chaos-item">⏰ Missed delivery deadlines</div>
+                                <div class="chaos-item">💸 Forgotten expenses</div>
+                                <div class="chaos-item">😵 Mental math for everything</div>
                             </div>
                         </div>
                     </div>
-                    <div class="bento-glow"></div>
-                </div>
 
-                 <!-- Feature 4: Interactive Calendar -->
-                <div class="bento-item bento-wide" data-aos="fade-up">
-                    <div class="bento-content">
-                        <div class="bento-icon">📅</div>
-                        <h3 class="bento-title">Smart Calendar & Tasks</h3>
-                        <p class="bento-description">Plan your baking schedule. Never miss a delivery!</p>
-                        
-                         <!-- Interactive mini calendar -->
-                        <div class="mini-calendar">
-                            <div class="calendar-header">
-                                <span>October 2025</span>
-                            </div>
-                            <div class="calendar-grid">
-                                <div class="calendar-day">Mon</div>
-                                <div class="calendar-day">Tue</div>
-                                <div class="calendar-day">Wed</div>
-                                <div class="calendar-day">Thu</div>
-                                <div class="calendar-day">Fri</div>
-                                <div class="calendar-day">Sat</div>
-                                <div class="calendar-day">Sun</div>
-                                
-                                <div class="calendar-date">1</div>
-                                <div class="calendar-date">2</div>
-                                <div class="calendar-date">3</div>
-                                <div class="calendar-date">4</div>
-                                <div class="calendar-date">5</div>
-                                <div class="calendar-date">6</div>
-                                <div class="calendar-date">7</div>
-                                <div class="calendar-date has-event" data-event="Delivery: Divyam Shah">8</div>
-                                <div class="calendar-date">9</div>
-                                <div class="calendar-date has-event" data-event="Delivery: Priya's Order">10</div>
-                                <div class="calendar-date">11</div>
-                                <div class="calendar-date">12</div>
-                                <div class="calendar-date">13</div>
-                                <div class="calendar-date">14</div>
-                                <div class="calendar-date">15</div>
-                                <div class="calendar-date">16</div>
-                                <div class="calendar-date">17</div>
-                                <div class="calendar-date has-event" data-event="Delivery: Ronak's Order">18</div>
-                                <div class="calendar-date">19</div>
-                                <div class="calendar-date">20</div>
-                                <div class="calendar-date">21</div>
-                                <div class="calendar-date">22</div>
-                                <div class="calendar-date">23</div>
-                                <div class="calendar-date">24</div>
-                                <div class="calendar-date">25</div>
-                                <div class="calendar-date">26</div>
-                                <div class="calendar-date">27</div>
-                                <div class="calendar-date">28</div>
-                                <div class="calendar-date">29</div>
-                                <div class="calendar-date">30</div>
-                                <div class="calendar-date">31</div>                                
-                            </div>
-                            <div class="calendar-events">
-                                <h6>This week</h6>
-                                <div class="calendar-event">
-                                    <span class="event-dot"></span>
-                                    <span>Oct 8: Delivery - Snehi Shah</span>
-                                </div>
-                                <div class="calendar-event">
-                                    <span class="event-dot"></span>
-                                    <span>Oct 10: Delivery - Priya's Order</span>
-                                </div>
+                     <!-- After side -->
+                    <div class="after-side">
+                        <div class="side-content">
+                            <h3>✨ After Bakers Hub</h3>
+                            <div class="organized-items">
+                                <div class="organized-item">✓ All orders organized</div>
+                                <div class="organized-item">✓ Digital tracking system</div>
+                                <div class="organized-item">✓ Real-time profit insights</div>
+                                <div class="organized-item">✓ Smart delivery reminders</div>
+                                <div class="organized-item">✓ Automatic expense logging</div>
+                                <div class="organized-item">✓ Instant calculations</div>
                             </div>
                         </div>
                     </div>
-                    <div class="bento-glow"></div>
-                </div>
 
-                 <!-- Feature 3: Notifications  -->
-                <div class="bento-item bento-small" data-aos="fade-up">
-                    <div class="bento-content">
-                        <div class="bento-icon">🔔</div>
-                        <h3 class="bento-title">Delivery Alerts</h3>
-                        <p class="bento-description">Smart notifications</p>
-                        <div class="notification-preview">
-                            <div class="notification-badge pulse">3</div>
+                     <!-- Draggable slider -->
+                    <div class="slider-control" id="beforeAfterSlider">
+                        <div class="slider-button">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2"/>
+                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
                         </div>
-                    </div>
-                    <div class="bento-glow"></div>
-                </div>
-
-                 <!-- Feature 4: Reports  -->
-                <div class="bento-item bento-small" data-aos="fade-up">
-                    <div class="bento-content">
-                        <div class="bento-icon">📊</div>
-                        <h3 class="bento-title">Reports</h3>
-                        <p class="bento-description">Business insights</p>
-                        <div class="mini-chart">
-                            <div class="chart-bar" style="height: 40%"></div>
-                            <div class="chart-bar" style="height: 65%"></div>
-                            <div class="chart-bar" style="height: 85%"></div>
-                            <div class="chart-bar" style="height: 100%"></div>
-                        </div>
-                    </div>
-                    <div class="bento-glow"></div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-     <!-- ========== STORY SECTION ==========  -->
-    <section class="story-section" id="story">
-        <div class="container">
-             <!-- Section header  -->
-            <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">Built for Bakers,<br><span class="gradient-text">By People Who Care</span></h2>
-            </div>
-
-             <!-- Story cards  -->
-            <div class="row g-4">
-                 <!-- Problem  -->
-                <div class="col-lg-6" data-aos="fade-right" data-aos-delay="100">
-                    <div class="story-card problem-card">
-                        <div class="story-icon">😰</div>
-                        <h3 class="story-title">The Problem</h3>
-                        <p class="story-text">
-                            Home bakers juggle WhatsApp messages, paper notes, and mental math. Orders get lost, expenses are forgotten, and profit calculations are guesswork.
-                        </p>
-                        <ul class="story-list">
-                            <li>Lost orders in chat threads</li>
-                            <li>No idea of real profit</li>
-                            <li>Forgotten ingredient costs</li>
-                            <li>Missed delivery deadlines</li>
-                        </ul>
-                    </div>
-                </div>
-
-                 <!-- Solution  -->
-                <div class="col-lg-6" data-aos="fade-left" data-aos-delay="200">
-                    <div class="story-card solution-card">
-                        <div class="story-icon">✨</div>
-                        <h3 class="story-title">The Solution</h3>
-                        <p class="story-text">
-                            Bakers Hub brings everything together. One beautiful app that handles orders, expenses, shopping lists, and notifications.
-                        </p>
-                        <ul class="story-list">
-                            <li>All orders in one place</li>
-                            <li>Real-time profit tracking</li>
-                            <li>Automatic expense logging</li>
-                            <li>Smart delivery reminders</li>
-                        </ul>
+                        <div class="slider-line"></div>
                     </div>
                 </div>
             </div>
@@ -618,6 +661,249 @@
                             <div class="author-info">
                                 <div class="author-name">Riya Patel</div>
                                 <div class="author-business">Riya's Bakehouse, Delhi</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ROI CALCULATOR SECTION ==========  -->
+    <section class="roi-section" id="roi">
+        <div class="container">
+             <!-- Section header  -->
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">See Your <span class="gradient-text">Business Growth</span></h2>
+                <p class="section-subtitle">Calculate how much Bakers Hub will boost your bakery business</p>
+            </div>
+
+            <div class="row align-items-center">
+                 <!-- Left: Calculator -->
+                <div class="col-lg-6" data-aos="fade-right">
+                    <div class="roi-calculator-card">
+                        <h3>Your Business Stats</h3>
+                         <!-- Updated calculator inputs to be relevant for bakers -->
+                        <div class="calculator-inputs">
+                            <div class="calculator-input-group">
+                                <label>Orders per month</label>
+                                <input type="number" id="ordersPerMonth" value="30" min="1" max="500">
+                            </div>
+                            <div class="calculator-input-group">
+                                <label>Average order value (₹)</label>
+                                <input type="number" id="avgOrderValue" value="2000" min="100" max="50000" step="100">
+                            </div>
+                            <div class="calculator-input-group">
+                                <label>Time spent per order on manual tracking (minutes)</label>
+                                <input type="number" id="timePerOrder" value="15" min="1" max="120">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- Right: Results -->
+                <div class="col-lg-6" data-aos="fade-left">
+                    <div class="roi-results-card">
+                        <h3>Your Growth with Bakers Hub</h3>
+                         <!-- Updated results to show relevant metrics for bakers -->
+                        <div class="roi-result-item">
+                            <div class="roi-result-icon">💰</div>
+                            <div class="roi-result-content">
+                                <div class="roi-result-value" id="monthlyRevenue">₹60,000</div>
+                                <div class="roi-result-label">Monthly revenue</div>
+                            </div>
+                        </div>
+                        <div class="roi-result-item">
+                            <div class="roi-result-icon">⏰</div>
+                            <div class="roi-result-content">
+                                <div class="roi-result-value" id="timeSaved">7.5 hours</div>
+                                <div class="roi-result-label">Time saved per month</div>
+                            </div>
+                        </div>
+                        <div class="roi-result-item">
+                            <div class="roi-result-icon">📈</div>
+                            <div class="roi-result-content">
+                                <div class="roi-result-value" id="extraOrders">+5 orders</div>
+                                <div class="roi-result-label">Extra orders you can take</div>
+                            </div>
+                        </div>
+                        <div class="roi-result-item">
+                            <div class="roi-result-icon">🎯</div>
+                            <div class="roi-result-content">
+                                <div class="roi-result-value" id="yearlyGrowth">₹7.2L</div>
+                                <div class="roi-result-label">Potential yearly revenue</div>
+                            </div>
+                        </div>
+                        <div class="roi-cta">
+                            <p>That's <strong id="roiMultiplier">20%</strong> more orders!</p>
+                            <a href="#waitlist" class="btn btn-primary">Start Growing Now</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PRICING SECTION ==========  -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+             <!-- Section header  -->
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">Simple, <span class="gradient-text">Transparent Pricing</span></h2>
+                <p class="section-subtitle">Choose the plan that fits your baking business</p>
+            </div>
+
+            <div class="row g-4 justify-content-center">
+                 <!-- Starter Plan -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
+                    <div class="pricing-card">
+                        <div class="pricing-badge">STARTER</div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">299</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-description">Perfect for home bakers just starting out</p>
+                        <ul class="pricing-features">
+                            <li><span class="feature-check">✓</span> Up to 50 orders/month</li>
+                            <li><span class="feature-check">✓</span> Expense tracking</li>
+                            <li><span class="feature-check">✓</span> Shopping lists</li>
+                            <li><span class="feature-check">✓</span> Basic reports</li>
+                            <li><span class="feature-check">✓</span> Email support</li>
+                        </ul>
+                        <a href="#waitlist" class="btn btn-outline w-100">Get Started</a>
+                    </div>
+                </div>
+
+                 <!-- Pro Plan (Popular) -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
+                    <div class="pricing-card pricing-card-popular">
+                        <div class="pricing-badge pricing-badge-popular">MOST POPULAR</div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">599</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-description">For growing bakery businesses</p>
+                        <ul class="pricing-features">
+                            <li><span class="feature-check">✓</span> Unlimited orders</li>
+                            <li><span class="feature-check">✓</span> Advanced expense tracking</li>
+                            <li><span class="feature-check">✓</span> Smart shopping lists</li>
+                            <li><span class="feature-check">✓</span> Calendar & reminders</li>
+                            <li><span class="feature-check">✓</span> Detailed analytics</li>
+                            <li><span class="feature-check">✓</span> Priority support</li>
+                            <li><span class="feature-check">✓</span> Custom branding</li>
+                        </ul>
+                        <a href="#waitlist" class="btn btn-primary w-100">Get Started</a>
+                    </div>
+                </div>
+
+                 <!-- Business Plan -->
+                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
+                    <div class="pricing-card">
+                        <div class="pricing-badge">BUSINESS</div>
+                        <div class="pricing-price">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount">999</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <p class="pricing-description">For established bakery businesses</p>
+                        <ul class="pricing-features">
+                            <li><span class="feature-check">✓</span> Everything in Pro</li>
+                            <li><span class="feature-check">✓</span> Multi-user access</li>
+                            <li><span class="feature-check">✓</span> Team collaboration</li>
+                            <li><span class="feature-check">✓</span> Advanced reports</li>
+                            <li><span class="feature-check">✓</span> API access</li>
+                            <li><span class="feature-check">✓</span> Dedicated support</li>
+                            <li><span class="feature-check">✓</span> Custom integrations</li>
+                        </ul>
+                        <a href="#waitlist" class="btn btn-outline w-100">Get Started</a>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Pricing note -->
+            <div class="pricing-note text-center" data-aos="fade-up" data-aos-delay="400">
+                <p>🎉 <strong>Early bird special:</strong> Join the waitlist and get <strong>50% off</strong> for the first 6 months!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ SECTION ==========  -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+             <!-- Section header  -->
+            <div class="section-header text-center" data-aos="fade-up">
+                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
+                <p class="section-subtitle">Everything you need to know about Bakers Hub</p>
+            </div>
+
+            <div class="row justify-content-center">
+                <div class="col-lg-8">
+                    <div class="faq-accordion">
+                         <!-- FAQ Item 1 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
+                            <div class="faq-question">
+                                <span>Is Bakers Hub suitable for beginners?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Bakers Hub is designed specifically for home bakers of all levels. Our intuitive interface makes it easy to start managing your orders and expenses from day one, with no learning curve.</p>
+                            </div>
+                        </div>
+
+                         <!-- FAQ Item 2 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
+                            <div class="faq-question">
+                                <span>Can I try Bakers Hub before committing?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes! We offer a 14-day free trial with full access to all features. No credit card required. Join the waitlist to be notified when trials become available.</p>
+                            </div>
+                        </div>
+
+                         <!-- FAQ Item 3 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
+                            <div class="faq-question">
+                                <span>Is my data secure?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Your data security is our top priority. We use bank-level encryption, secure cloud storage, and regular backups. Your business information is always safe and private.</p>
+                            </div>
+                        </div>
+
+                         <!-- FAQ Item 4 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
+                            <div class="faq-question">
+                                <span>Can I cancel anytime?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes, you can cancel your subscription at any time with no questions asked. We believe in earning your business every month, not locking you in.</p>
+                            </div>
+                        </div>
+
+                         <!-- FAQ Item 5 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
+                            <div class="faq-question">
+                                <span>Do you offer customer support?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>We offer email support for all plans, with priority support for Pro and Business plans. Our team typically responds within 24 hours, and we're always here to help you succeed.</p>
+                            </div>
+                        </div>
+
+                         <!-- FAQ Item 6 -->
+                        <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
+                            <div class="faq-question">
+                                <span>Can I export my data?</span>
+                                <span class="faq-icon">+</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Yes! You can export all your data (orders, expenses, reports) at any time in CSV or PDF format. Your data is yours, and you have full control over it.</p>
                             </div>
                         </div>
                     </div>
@@ -694,138 +980,6 @@
                                 <span class="benefit-text">Priority support</span>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-     <!-- ========== ROI CALCULATOR SECTION ==========  -->
-    <section class="roi-section" id="roi">
-        <div class="container">
-             <!-- Section header  -->
-            <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">See Your <span class="gradient-text">Business Growth</span></h2>
-                <p class="section-subtitle">Calculate how much Bakers Hub will boost your bakery business</p>
-            </div>
-
-            <div class="row align-items-center">
-                 <!-- Left: Calculator -->
-                <div class="col-lg-6" data-aos="fade-right">
-                    <div class="roi-calculator-card">
-                        <h3>Your Business Stats</h3>
-                         <!-- Updated calculator inputs to be relevant for bakers -->
-                        <div class="calculator-inputs">
-                            <div class="calculator-input-group">
-                                <label>Orders per month</label>
-                                <input type="number" id="ordersPerMonth" value="30" min="1" max="500">
-                            </div>
-                            <div class="calculator-input-group">
-                                <label>Average order value (₹)</label>
-                                <input type="number" id="avgOrderValue" value="2000" min="100" max="50000" step="100">
-                            </div>
-                            <div class="calculator-input-group">
-                                <label>Time spent per order on manual tracking (minutes)</label>
-                                <input type="number" id="timePerOrder" value="15" min="1" max="120">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Right: Results -->
-                <div class="col-lg-6" data-aos="fade-left">
-                    <div class="roi-results-card">
-                        <h3>Your Growth with Bakers Hub</h3>
-                         <!-- Updated results to show relevant metrics for bakers -->
-                        <div class="roi-result-item">
-                            <div class="roi-result-icon">💰</div>
-                            <div class="roi-result-content">
-                                <div class="roi-result-value" id="monthlyRevenue">₹60,000</div>
-                                <div class="roi-result-label">Monthly revenue</div>
-                            </div>
-                        </div>
-                        <div class="roi-result-item">
-                            <div class="roi-result-icon">⏰</div>
-                            <div class="roi-result-content">
-                                <div class="roi-result-value" id="timeSaved">7.5 hours</div>
-                                <div class="roi-result-label">Time saved per month</div>
-                            </div>
-                        </div>
-                        <div class="roi-result-item">
-                            <div class="roi-result-icon">📈</div>
-                            <div class="roi-result-content">
-                                <div class="roi-result-value" id="extraOrders">+5 orders</div>
-                                <div class="roi-result-label">Extra orders you can take</div>
-                            </div>
-                        </div>
-                        <div class="roi-result-item">
-                            <div class="roi-result-icon">🎯</div>
-                            <div class="roi-result-content">
-                                <div class="roi-result-value" id="yearlyGrowth">₹7.2L</div>
-                                <div class="roi-result-label">Potential yearly revenue</div>
-                            </div>
-                        </div>
-                        <div class="roi-cta">
-                            <p>That's <strong id="roiMultiplier">20%</strong> more orders!</p>
-                            <a href="#waitlist" class="btn btn-primary">Start Growing Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-     <!-- ========== BEFORE/AFTER INTERACTIVE SLIDER SECTION ========== -->
-     <!-- Added totally unique before/after comparison with draggable slider -->
-    <section class="before-after-section">
-        <div class="container">
-             <!-- Section header -->
-            <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">Life Before vs After <span class="gradient-text">Bakers Hub</span></h2>
-                <p class="section-subtitle">Drag the slider to see the transformation</p>
-            </div>
-
-            <div class="before-after-container" data-aos="zoom-in">
-                <div class="before-after-wrapper" id="beforeAfterWrapper">
-                     <!-- Before side -->
-                    <div class="before-side" id="beforeSide">
-                        <div class="side-content">
-                            <h3>😰 Before Bakers Hub</h3>
-                            <div class="chaos-items">
-                                <div class="chaos-item">📱 Lost orders in WhatsApp</div>
-                                <div class="chaos-item">📝 Messy paper notes everywhere</div>
-                                <div class="chaos-item">🤯 No idea of real profit</div>
-                                <div class="chaos-item">⏰ Missed delivery deadlines</div>
-                                <div class="chaos-item">💸 Forgotten expenses</div>
-                                <div class="chaos-item">😵 Mental math for everything</div>
-                            </div>
-                        </div>
-                    </div>
-
-                     <!-- After side -->
-                    <div class="after-side">
-                        <div class="side-content">
-                            <h3>✨ After Bakers Hub</h3>
-                            <div class="organized-items">
-                                <div class="organized-item">✓ All orders organized</div>
-                                <div class="organized-item">✓ Digital tracking system</div>
-                                <div class="organized-item">✓ Real-time profit insights</div>
-                                <div class="organized-item">✓ Smart delivery reminders</div>
-                                <div class="organized-item">✓ Automatic expense logging</div>
-                                <div class="organized-item">✓ Instant calculations</div>
-                            </div>
-                        </div>
-                    </div>
-
-                     <!-- Draggable slider -->
-                    <div class="slider-control" id="beforeAfterSlider">
-                        <div class="slider-button">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2"/>
-                                <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <div class="slider-line"></div>
                     </div>
                 </div>
             </div>
@@ -974,91 +1128,6 @@
         </div>
     </section>
 
-     <!-- ========== PRICING SECTION ==========  -->
-    <section class="pricing-section" id="pricing">
-        <div class="container">
-             <!-- Section header  -->
-            <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">Simple, <span class="gradient-text">Transparent Pricing</span></h2>
-                <p class="section-subtitle">Choose the plan that fits your baking business</p>
-            </div>
-
-            <div class="row g-4 justify-content-center">
-                 <!-- Starter Plan -->
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="100">
-                    <div class="pricing-card">
-                        <div class="pricing-badge">STARTER</div>
-                        <div class="pricing-price">
-                            <span class="price-currency">₹</span>
-                            <span class="price-amount">299</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for home bakers just starting out</p>
-                        <ul class="pricing-features">
-                            <li><span class="feature-check">✓</span> Up to 50 orders/month</li>
-                            <li><span class="feature-check">✓</span> Expense tracking</li>
-                            <li><span class="feature-check">✓</span> Shopping lists</li>
-                            <li><span class="feature-check">✓</span> Basic reports</li>
-                            <li><span class="feature-check">✓</span> Email support</li>
-                        </ul>
-                        <a href="#waitlist" class="btn btn-outline w-100">Get Started</a>
-                    </div>
-                </div>
-
-                 <!-- Pro Plan (Popular) -->
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="200">
-                    <div class="pricing-card pricing-card-popular">
-                        <div class="pricing-badge pricing-badge-popular">MOST POPULAR</div>
-                        <div class="pricing-price">
-                            <span class="price-currency">₹</span>
-                            <span class="price-amount">599</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="pricing-description">For growing bakery businesses</p>
-                        <ul class="pricing-features">
-                            <li><span class="feature-check">✓</span> Unlimited orders</li>
-                            <li><span class="feature-check">✓</span> Advanced expense tracking</li>
-                            <li><span class="feature-check">✓</span> Smart shopping lists</li>
-                            <li><span class="feature-check">✓</span> Calendar & reminders</li>
-                            <li><span class="feature-check">✓</span> Detailed analytics</li>
-                            <li><span class="feature-check">✓</span> Priority support</li>
-                            <li><span class="feature-check">✓</span> Custom branding</li>
-                        </ul>
-                        <a href="#waitlist" class="btn btn-primary w-100">Get Started</a>
-                    </div>
-                </div>
-
-                 <!-- Business Plan -->
-                <div class="col-lg-4" data-aos="fade-up" data-aos-delay="300">
-                    <div class="pricing-card">
-                        <div class="pricing-badge">BUSINESS</div>
-                        <div class="pricing-price">
-                            <span class="price-currency">₹</span>
-                            <span class="price-amount">999</span>
-                            <span class="price-period">/month</span>
-                        </div>
-                        <p class="pricing-description">For established bakery businesses</p>
-                        <ul class="pricing-features">
-                            <li><span class="feature-check">✓</span> Everything in Pro</li>
-                            <li><span class="feature-check">✓</span> Multi-user access</li>
-                            <li><span class="feature-check">✓</span> Team collaboration</li>
-                            <li><span class="feature-check">✓</span> Advanced reports</li>
-                            <li><span class="feature-check">✓</span> API access</li>
-                            <li><span class="feature-check">✓</span> Dedicated support</li>
-                            <li><span class="feature-check">✓</span> Custom integrations</li>
-                        </ul>
-                        <a href="#waitlist" class="btn btn-outline w-100">Get Started</a>
-                    </div>
-                </div>
-            </div>
-
-             <!-- Pricing note -->
-            <div class="pricing-note text-center" data-aos="fade-up" data-aos-delay="400">
-                <p>🎉 <strong>Early bird special:</strong> Join the waitlist and get <strong>50% off</strong> for the first 6 months!</p>
-            </div>
-        </div>
-    </section>
-
      <!-- ========== SUCCESS METRICS SECTION ==========  -->
     <section class="success-metrics-section">
         <div class="container">
@@ -1085,89 +1154,6 @@
                     <div class="success-metric">
                         <div class="metric-number-large">4.9★</div>
                         <div class="metric-label-large">Average Rating</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-     <!-- ========== FAQ SECTION ==========  -->
-    <section class="faq-section" id="faq">
-        <div class="container">
-             <!-- Section header  -->
-            <div class="section-header text-center" data-aos="fade-up">
-                <h2 class="section-title">Frequently Asked <span class="gradient-text">Questions</span></h2>
-                <p class="section-subtitle">Everything you need to know about Bakers Hub</p>
-            </div>
-
-            <div class="row justify-content-center">
-                <div class="col-lg-8">
-                    <div class="faq-accordion">
-                         <!-- FAQ Item 1 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="100">
-                            <div class="faq-question">
-                                <span>Is Bakers Hub suitable for beginners?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Bakers Hub is designed specifically for home bakers of all levels. Our intuitive interface makes it easy to start managing your orders and expenses from day one, with no learning curve.</p>
-                            </div>
-                        </div>
-
-                         <!-- FAQ Item 2 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="200">
-                            <div class="faq-question">
-                                <span>Can I try Bakers Hub before committing?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Yes! We offer a 14-day free trial with full access to all features. No credit card required. Join the waitlist to be notified when trials become available.</p>
-                            </div>
-                        </div>
-
-                         <!-- FAQ Item 3 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="300">
-                            <div class="faq-question">
-                                <span>Is my data secure?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Your data security is our top priority. We use bank-level encryption, secure cloud storage, and regular backups. Your business information is always safe and private.</p>
-                            </div>
-                        </div>
-
-                         <!-- FAQ Item 4 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="400">
-                            <div class="faq-question">
-                                <span>Can I cancel anytime?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Yes, you can cancel your subscription at any time with no questions asked. We believe in earning your business every month, not locking you in.</p>
-                            </div>
-                        </div>
-
-                         <!-- FAQ Item 5 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="500">
-                            <div class="faq-question">
-                                <span>Do you offer customer support?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>We offer email support for all plans, with priority support for Pro and Business plans. Our team typically responds within 24 hours, and we're always here to help you succeed.</p>
-                            </div>
-                        </div>
-
-                         <!-- FAQ Item 6 -->
-                        <div class="faq-item" data-aos="fade-up" data-aos-delay="600">
-                            <div class="faq-question">
-                                <span>Can I export my data?</span>
-                                <span class="faq-icon">+</span>
-                            </div>
-                            <div class="faq-answer">
-                                <p>Yes! You can export all your data (orders, expenses, reports) at any time in CSV or PDF format. Your data is yours, and you have full control over it.</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -1278,6 +1264,6 @@
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     
      <!-- Custom JS  -->
-    <script src="script.js"></script>
+    <script src="/static/website/script.js"></script>
 </body>
 </html>
