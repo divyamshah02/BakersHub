@@ -14,6 +14,54 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })
 
+document.addEventListener("DOMContentLoaded", () => {
+  const appMockup = document.querySelector(".app-mockup")
+  const heroSection = document.querySelector(".hero-section")
+
+  if (!appMockup || !heroSection) return
+
+  window.addEventListener("scroll", () => {
+    const scrolled = window.pageYOffset
+    const windowHeight = window.innerHeight
+    const screenWidth = window.innerWidth
+
+    // Calculate the mockup's top position relative to document
+    const mockupRect = appMockup.getBoundingClientRect()
+    const mockupTop = mockupRect.top + scrolled
+    const mockupHeight = mockupRect.height
+
+    // Determine fade range
+    let startFade, endFade
+
+    if (screenWidth >= 992) {
+      // Desktop behavior: same as before
+      startFade = heroSection.offsetTop
+      endFade = heroSection.offsetTop + windowHeight
+    } else {
+      // Mobile behavior: fade only when mockup comes into view
+      startFade = mockupTop - windowHeight * 0.5
+      endFade = mockupTop + mockupHeight * 0.8
+    }
+
+    // Compute progress (0 → 1)
+    const progress = Math.min(Math.max((scrolled - startFade) / (endFade - startFade), 0), 1)
+
+    // Apply transforms
+    const rotateX = progress * 15
+    const translateY = progress * 100
+    const scale = 1 - progress * 0.1
+    const opacity = 1 - progress * 0.8
+
+    appMockup.style.transform = `
+      perspective(1000px)
+      rotateX(${rotateX}deg)
+      translateY(${translateY}px)
+      scale(${scale})
+    `
+    appMockup.style.opacity = opacity
+  })
+})
+
 // ============================================
 // NAVBAR SCROLL EFFECT
 // ============================================
@@ -36,26 +84,26 @@ window.addEventListener("scroll", () => {
 // ============================================
 // HERO PARALLAX EFFECT
 // ============================================
-const heroPhone = document.getElementById("heroPhone")
-const heroBg = document.getElementById("heroBg")
+// const heroPhone = document.getElementById("heroPhone")
+// const heroBg = document.getElementById("heroBg")
 
-window.addEventListener("scroll", () => {
-  const scrolled = window.pageYOffset
+// window.addEventListener("scroll", () => {
+//   const scrolled = window.pageYOffset
 
-  if (heroPhone && scrolled < window.innerHeight) {
-    const parallaxSpeed = 0.3
-    const scaleSpeed = 0.0002
-    const opacitySpeed = 0.0015
-    heroPhone.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(${1 - scrolled * scaleSpeed})`
-    heroPhone.style.opacity = 1 - scrolled * opacitySpeed
-  }
+//   if (heroPhone && scrolled < window.innerHeight) {
+//     const parallaxSpeed = 0.3
+//     const scaleSpeed = 0.0002
+//     const opacitySpeed = 0.0015
+//     heroPhone.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(${1 - scrolled * scaleSpeed})`
+//     heroPhone.style.opacity = 1 - scrolled * opacitySpeed
+//   }
 
-  if (heroBg && scrolled < window.innerHeight) {
-    const parallaxSpeed = 0.5
-    heroBg.style.transform = `translateY(${scrolled * parallaxSpeed}px)`
-    heroBg.style.opacity = 1 - scrolled * 0.0015
-  }
-})
+//   if (heroBg && scrolled < window.innerHeight) {
+//     const parallaxSpeed = 0.5
+//     heroBg.style.transform = `translateY(${scrolled * parallaxSpeed}px)`
+//     heroBg.style.opacity = 1 - scrolled * 0.0015
+//   }
+// })
 
 // ============================================
 // HORIZONTAL SCROLL FOR SHOWCASE SECTION
@@ -469,28 +517,6 @@ calendarDates.forEach((date) => {
   })
 })
 
-// ============================================
-// PARALLAX EFFECT FOR COMPARISON SECTION
-// ============================================
-const comparisonSection = document.querySelector(".comparison-section")
-
-if (comparisonSection) {
-  window.addEventListener("scroll", () => {
-    const rect = comparisonSection.getBoundingClientRect()
-    const scrollPercent = (window.innerHeight - rect.top) / (window.innerHeight + rect.height)
-
-    if (scrollPercent > 0 && scrollPercent < 1) {
-      const beforeSide = comparisonSection.querySelector(".comparison-side.before")
-      const afterSide = comparisonSection.querySelector(".comparison-side.after")
-
-      if (beforeSide && afterSide) {
-        const translateX = (scrollPercent - 0.5) * 30
-        beforeSide.style.transform = `translateX(${-translateX}px)`
-        afterSide.style.transform = `translateX(${translateX}px)`
-      }
-    }
-  })
-}
 
 // ============================================
 // FORM SUBMISSIONS - Orders and Expenses
@@ -580,31 +606,31 @@ deleteItemBtns.forEach((btn) => {
 // ============================================
 // ENHANCED PARALLAX FOR HERO PHONE
 // ============================================
-const heroPhoneWrapper = document.getElementById("heroPhone")
+// const heroPhoneWrapper = document.getElementById("heroPhone")
 
-window.addEventListener("scroll", () => {
-  const scrolled = window.pageYOffset
+// window.addEventListener("scroll", () => {
+//   const scrolled = window.pageYOffset
 
-  if (heroPhoneWrapper && scrolled < window.innerHeight) {
-    const parallaxSpeed = 0.4
-    const scaleSpeed = 0.0003
-    const opacitySpeed = 0.002
-    const rotateSpeed = 0.02
+//   if (heroPhoneWrapper && scrolled < window.innerHeight) {
+//     const parallaxSpeed = 0.4
+//     const scaleSpeed = 0.0003
+//     const opacitySpeed = 0.002
+//     const rotateSpeed = 0.02
 
-    heroPhoneWrapper.style.transform = `
-      translateY(${scrolled * parallaxSpeed}px) 
-      scale(${1 - scrolled * scaleSpeed})
-      rotateX(${scrolled * rotateSpeed}deg)
-    `
-    heroPhoneWrapper.style.opacity = 1 - scrolled * opacitySpeed
-  }
+//     heroPhoneWrapper.style.transform = `
+//       translateY(${scrolled * parallaxSpeed}px) 
+//       scale(${1 - scrolled * scaleSpeed})
+//       rotateX(${scrolled * rotateSpeed}deg)
+//     `
+//     heroPhoneWrapper.style.opacity = 1 - scrolled * opacitySpeed
+//   }
 
-  if (heroBg && scrolled < window.innerHeight) {
-    const parallaxSpeed = 0.6
-    heroBg.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(${1 + scrolled * 0.0002})`
-    heroBg.style.opacity = 1 - scrolled * 0.002
-  }
-})
+//   if (heroBg && scrolled < window.innerHeight) {
+//     const parallaxSpeed = 0.6
+//     heroBg.style.transform = `translateY(${scrolled * parallaxSpeed}px) scale(${1 + scrolled * 0.0002})`
+//     heroBg.style.opacity = 1 - scrolled * 0.002
+//   }
+// })
 
 // ============================================
 // ENHANCED ZOOM EFFECT FOR APP SCREENS
@@ -706,29 +732,29 @@ formPreviewContainers.forEach((container) => {
 // ============================================
 // ENHANCED PARALLAX FOR APP MOCKUP IN HERO
 // ============================================
-const appMockup = document.querySelector(".app-mockup")
+// const appMockup = document.querySelector(".app-mockup")
 
-if (appMockup) {
-  window.addEventListener("scroll", () => {
-    const scrolled = window.pageYOffset
-    const heroSection = document.querySelector(".hero-section")
+// if (appMockup) {
+//   window.addEventListener("scroll", () => {
+//     const scrolled = window.pageYOffset
+//     const heroSection = document.querySelector(".hero-section")
 
-    if (heroSection && scrolled < window.innerHeight) {
-      const scrollPercent = scrolled / window.innerHeight
-      const rotateX = scrollPercent * 15
-      const translateY = scrolled * 0.3
-      const scale = 1 - scrollPercent * 0.1
+//     if (heroSection && scrolled < window.innerHeight) {
+//       const scrollPercent = scrolled / window.innerHeight
+//       const rotateX = scrollPercent * 15
+//       const translateY = scrolled * 0.3
+//       const scale = 1 - scrollPercent * 0.1
 
-      appMockup.style.transform = `
-        perspective(1000px)
-        rotateX(${rotateX}deg)
-        translateY(${translateY}px)
-        scale(${scale})
-      `
-      appMockup.style.opacity = 1 - scrollPercent * 0.5
-    }
-  })
-}
+//       appMockup.style.transform = `
+//         perspective(1000px)
+//         rotateX(${rotateX}deg)
+//         translateY(${translateY}px)
+//         scale(${scale})
+//       `
+//       appMockup.style.opacity = 1 - scrollPercent * 0.5
+//     }
+//   })
+// }
 
 // ============================================
 // INTERACTIVE ORDER STATUS BUTTONS
@@ -945,68 +971,78 @@ calculateBakerROI()
 
 // ============================================
 // ============================================
-const beforeAfterSlider = document.getElementById("beforeAfterSlider")
-const beforeSide = document.getElementById("beforeSide")
-const beforeAfterWrapper = document.getElementById("beforeAfterWrapper")
+const beforeAfterSlider = document.getElementById("beforeAfterSlider");
+const beforeSide = document.getElementById("beforeSide");
+const beforeAfterWrapper = document.getElementById("beforeAfterWrapper");
 
 if (beforeAfterSlider && beforeSide && beforeAfterWrapper) {
-  let isDragging = false
+  let isDragging = false;
 
   function updateSlider(clientX, clientY) {
-    const rect = beforeAfterWrapper.getBoundingClientRect()
-    const isMobile = window.innerWidth <= 767
+    const rect = beforeAfterWrapper.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
-      // Vertical slider for mobile
-      const y = clientY - rect.top
-      const percent = (y / rect.height) * 100
-      const clampedPercent = Math.max(0, Math.min(100, percent))
+      // Vertical (up-down)
+      const y = clientY - rect.top;
+      const percent = (y / rect.height) * 100;
+      const clamped = Math.max(0, Math.min(100, percent));
 
-      beforeAfterSlider.style.top = `${clampedPercent}%`
-      beforeSide.style.clipPath = `inset(0 0 ${100 - clampedPercent}% 0)`
+      beforeAfterSlider.style.top = `${clamped}%`;
+      beforeSide.style.clipPath = `inset(${clamped}% 0 0 0)`;
     } else {
-      // Horizontal slider for desktop
-      const x = clientX - rect.left
-      const percent = (x / rect.width) * 100
-      const clampedPercent = Math.max(0, Math.min(100, percent))
+      // Horizontal (left-right)
+      const x = clientX - rect.left;
+      const percent = (x / rect.width) * 100;
+      const clamped = Math.max(0, Math.min(100, percent));
 
-      beforeAfterSlider.style.left = `${clampedPercent}%`
-      beforeSide.style.clipPath = `inset(0 ${100 - clampedPercent}% 0 0)`
+      beforeAfterSlider.style.left = `${clamped}%`;
+      beforeSide.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
     }
   }
 
-  // Mouse events
-  beforeAfterSlider.addEventListener("mousedown", (e) => {
-    isDragging = true
-    e.preventDefault()
-  })
+  const startDrag = (e) => {
+    isDragging = true;
+    e.preventDefault();
+  };
 
-  document.addEventListener("mousemove", (e) => {
-    if (isDragging) {
-      updateSlider(e.clientX, e.clientY)
+  const stopDrag = () => (isDragging = false);
+
+  const moveDrag = (e) => {
+    if (!isDragging) return;
+    if (e.touches) {
+      updateSlider(e.touches[0].clientX, e.touches[0].clientY);
+    } else {
+      updateSlider(e.clientX, e.clientY);
     }
-  })
+  };
 
-  document.addEventListener("mouseup", () => {
-    isDragging = false
-  })
+  beforeAfterSlider.addEventListener("mousedown", startDrag);
+  document.addEventListener("mouseup", stopDrag);
+  document.addEventListener("mousemove", moveDrag);
 
-  // Touch events for mobile
-  beforeAfterSlider.addEventListener("touchstart", (e) => {
-    isDragging = true
-    e.preventDefault()
-  })
+  beforeAfterSlider.addEventListener("touchstart", startDrag, { passive: false });
+  document.addEventListener("touchend", stopDrag);
+  document.addEventListener("touchmove", moveDrag, { passive: false });
 
-  document.addEventListener("touchmove", (e) => {
-    if (isDragging && e.touches[0]) {
-      updateSlider(e.touches[0].clientX, e.touches[0].clientY)
+  // Initialize position
+  function setInitialPosition() {
+    const isMobile = window.innerWidth <= 767;
+    if (isMobile) {
+      beforeAfterSlider.style.top = "50%";
+      beforeAfterSlider.style.left = "0";
+      beforeSide.style.clipPath = "inset(50% 0 0 0)";
+    } else {
+      beforeAfterSlider.style.left = "50%";
+      beforeAfterSlider.style.top = "0";
+      beforeSide.style.clipPath = "inset(0 50% 0 0)";
     }
-  })
+  }
 
-  document.addEventListener("touchend", () => {
-    isDragging = false
-  })
+  window.addEventListener("resize", setInitialPosition);
+  window.addEventListener("load", setInitialPosition);
 }
+
 
 // ============================================
 // ============================================
@@ -1513,3 +1549,31 @@ if (timelineSection) {
     }
   })
 }
+
+// Initialize correct orientation on load
+window.addEventListener("load", () => {
+  const isMobile = window.innerWidth <= 767;
+  if (isMobile) {
+    beforeAfterSlider.style.top = "50%";
+    beforeAfterSlider.style.left = "0";
+    beforeSide.style.clipPath = "inset(0 0 50% 0)";
+  } else {
+    beforeAfterSlider.style.left = "50%";
+    beforeAfterSlider.style.top = "0";
+    beforeSide.style.clipPath = "inset(0 50% 0 0)";
+  }
+});
+
+window.addEventListener("resize", () => {
+  const isMobile = window.innerWidth <= 767;
+  if (isMobile) {
+    beforeAfterSlider.style.top = "50%";
+    beforeAfterSlider.style.left = "0";
+    beforeSide.style.clipPath = "inset(50% 0 0 0)";
+  } else {
+    beforeAfterSlider.style.left = "50%";
+    beforeAfterSlider.style.top = "0";
+    beforeSide.style.clipPath = "inset(0 50% 0 0)";
+  }
+});
+
