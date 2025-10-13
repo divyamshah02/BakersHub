@@ -258,7 +258,7 @@ if (waitlistForm) {
                 'Content-Type': 'application/json',
                 'X-CSRFToken': getCookie('csrftoken')
             },
-            body: JSON.JSON.stringify(formData)
+            body: JSON.stringify(formData)
         })
         .then(response => response.json())
         .then(data => {
@@ -517,6 +517,7 @@ calendarDates.forEach((date) => {
   })
 })
 
+
 // ============================================
 // FORM SUBMISSIONS - Orders and Expenses
 // ============================================
@@ -617,7 +618,7 @@ deleteItemBtns.forEach((btn) => {
 //     const rotateSpeed = 0.02
 
 //     heroPhoneWrapper.style.transform = `
-//       translateY(${scrolled * parallaxSpeed}px)
+//       translateY(${scrolled * parallaxSpeed}px) 
 //       scale(${1 - scrolled * scaleSpeed})
 //       rotateX(${scrolled * rotateSpeed}deg)
 //     `
@@ -970,77 +971,78 @@ calculateBakerROI()
 
 // ============================================
 // ============================================
-const beforeAfterSlider = document.getElementById("beforeAfterSlider")
-const beforeSide = document.getElementById("beforeSide")
-const beforeAfterWrapper = document.getElementById("beforeAfterWrapper")
+const beforeAfterSlider = document.getElementById("beforeAfterSlider");
+const beforeSide = document.getElementById("beforeSide");
+const beforeAfterWrapper = document.getElementById("beforeAfterWrapper");
 
 if (beforeAfterSlider && beforeSide && beforeAfterWrapper) {
-  let isDragging = false
+  let isDragging = false;
 
   function updateSlider(clientX, clientY) {
-    const rect = beforeAfterWrapper.getBoundingClientRect()
-    const isMobile = window.innerWidth <= 767
+    const rect = beforeAfterWrapper.getBoundingClientRect();
+    const isMobile = window.innerWidth <= 767;
 
     if (isMobile) {
       // Vertical (up-down)
-      const y = clientY - rect.top
-      const percent = (y / rect.height) * 100
-      const clamped = Math.max(0, Math.min(100, percent))
+      const y = clientY - rect.top;
+      const percent = (y / rect.height) * 100;
+      const clamped = Math.max(0, Math.min(100, percent));
 
-      beforeAfterSlider.style.top = `${clamped}%`
-      beforeSide.style.clipPath = `inset(${clamped}% 0 0 0)`
+      beforeAfterSlider.style.top = `${clamped}%`;
+      beforeSide.style.clipPath = `inset(${clamped}% 0 0 0)`;
     } else {
       // Horizontal (left-right)
-      const x = clientX - rect.left
-      const percent = (x / rect.width) * 100
-      const clamped = Math.max(0, Math.min(100, percent))
+      const x = clientX - rect.left;
+      const percent = (x / rect.width) * 100;
+      const clamped = Math.max(0, Math.min(100, percent));
 
-      beforeAfterSlider.style.left = `${clamped}%`
-      beforeSide.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`
+      beforeAfterSlider.style.left = `${clamped}%`;
+      beforeSide.style.clipPath = `inset(0 ${100 - clamped}% 0 0)`;
     }
   }
 
   const startDrag = (e) => {
-    isDragging = true
-    e.preventDefault()
-  }
+    isDragging = true;
+    e.preventDefault();
+  };
 
-  const stopDrag = () => (isDragging = false)
+  const stopDrag = () => (isDragging = false);
 
   const moveDrag = (e) => {
-    if (!isDragging) return
+    if (!isDragging) return;
     if (e.touches) {
-      updateSlider(e.touches[0].clientX, e.touches[0].clientY)
+      updateSlider(e.touches[0].clientX, e.touches[0].clientY);
     } else {
-      updateSlider(e.clientX, e.clientY)
+      updateSlider(e.clientX, e.clientY);
     }
-  }
+  };
 
-  beforeAfterSlider.addEventListener("mousedown", startDrag)
-  document.addEventListener("mouseup", stopDrag)
-  document.addEventListener("mousemove", moveDrag)
+  beforeAfterSlider.addEventListener("mousedown", startDrag);
+  document.addEventListener("mouseup", stopDrag);
+  document.addEventListener("mousemove", moveDrag);
 
-  beforeAfterSlider.addEventListener("touchstart", startDrag, { passive: false })
-  document.addEventListener("touchend", stopDrag)
-  document.addEventListener("touchmove", moveDrag, { passive: false })
+  beforeAfterSlider.addEventListener("touchstart", startDrag, { passive: false });
+  document.addEventListener("touchend", stopDrag);
+  document.addEventListener("touchmove", moveDrag, { passive: false });
 
   // Initialize position
   function setInitialPosition() {
-    const isMobile = window.innerWidth <= 767
+    const isMobile = window.innerWidth <= 767;
     if (isMobile) {
-      beforeAfterSlider.style.top = "50%"
-      beforeAfterSlider.style.left = "0"
-      beforeSide.style.clipPath = "inset(50% 0 0 0)"
+      beforeAfterSlider.style.top = "50%";
+      beforeAfterSlider.style.left = "0";
+      beforeSide.style.clipPath = "inset(50% 0 0 0)";
     } else {
-      beforeAfterSlider.style.left = "50%"
-      beforeAfterSlider.style.top = "0"
-      beforeSide.style.clipPath = "inset(0 50% 0 0)"
+      beforeAfterSlider.style.left = "50%";
+      beforeAfterSlider.style.top = "0";
+      beforeSide.style.clipPath = "inset(0 50% 0 0)";
     }
   }
 
-  window.addEventListener("resize", setInitialPosition)
-  window.addEventListener("load", setInitialPosition)
+  window.addEventListener("resize", setInitialPosition);
+  window.addEventListener("load", setInitialPosition);
 }
+
 
 // ============================================
 // ============================================
@@ -1550,27 +1552,28 @@ if (timelineSection) {
 
 // Initialize correct orientation on load
 window.addEventListener("load", () => {
-  const isMobile = window.innerWidth <= 767
+  const isMobile = window.innerWidth <= 767;
   if (isMobile) {
-    beforeAfterSlider.style.top = "50%"
-    beforeAfterSlider.style.left = "0"
-    beforeSide.style.clipPath = "inset(0 0 50% 0)"
+    beforeAfterSlider.style.top = "50%";
+    beforeAfterSlider.style.left = "0";
+    beforeSide.style.clipPath = "inset(0 0 50% 0)";
   } else {
-    beforeAfterSlider.style.left = "50%"
-    beforeAfterSlider.style.top = "0"
-    beforeSide.style.clipPath = "inset(0 50% 0 0)"
+    beforeAfterSlider.style.left = "50%";
+    beforeAfterSlider.style.top = "0";
+    beforeSide.style.clipPath = "inset(0 50% 0 0)";
   }
-})
+});
 
 window.addEventListener("resize", () => {
-  const isMobile = window.innerWidth <= 767
+  const isMobile = window.innerWidth <= 767;
   if (isMobile) {
-    beforeAfterSlider.style.top = "50%"
-    beforeAfterSlider.style.left = "0"
-    beforeSide.style.clipPath = "inset(50% 0 0 0)"
+    beforeAfterSlider.style.top = "50%";
+    beforeAfterSlider.style.left = "0";
+    beforeSide.style.clipPath = "inset(50% 0 0 0)";
   } else {
-    beforeAfterSlider.style.left = "50%"
-    beforeAfterSlider.style.top = "0"
-    beforeSide.style.clipPath = "inset(0 50% 0 0)"
+    beforeAfterSlider.style.left = "50%";
+    beforeAfterSlider.style.top = "0";
+    beforeSide.style.clipPath = "inset(0 50% 0 0)";
   }
-})
+});
+

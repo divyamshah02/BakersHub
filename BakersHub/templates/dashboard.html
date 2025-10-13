@@ -10,6 +10,8 @@
     <link href="/static/css/styles.css" rel="stylesheet">
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <!-- Added canvas-confetti library for first login celebration -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
     <style>
         h5.mb-0 {
@@ -21,11 +23,660 @@
             margin-top: 2px;
             font-size: 0.9rem;
         }
+
+        /* Added styles for motivation card */
+        .motivation-card {
+            background: linear-gradient(135deg, var(--golden-brown) 0%, #8B6F47 100%);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 4px 15px rgba(165, 124, 85, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .motivation-card::before {
+            content: '🎉';
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            font-size: 2.5rem;
+            opacity: 0.3;
+        }
+
+        .motivation-card h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .motivation-card p {
+            font-size: 0.9rem;
+            margin: 0;
+            opacity: 0.95;
+        }
+
+        .motivation-card .highlight {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #ffd700;
+        }
+
+        /* Added notification bell dropdown styles (YouTube/Facebook style) */
+        .notification-bell {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .notification-bell-icon {
+            font-size: 1.3rem;
+            color: var(--golden-brown);
+            position: relative;
+        }
+
+        .notification-bell-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #dc3545;
+            color: white;
+            border-radius: 10px;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            min-width: 18px;
+            text-align: center;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 360px;
+            max-width: 90vw;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            display: none;
+            z-index: 1000;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notification-dropdown.show {
+            display: block;
+        }
+
+        .notification-dropdown::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            right: 20px;
+            width: 16px;
+            height: 16px;
+            background: white;
+            transform: rotate(45deg);
+            box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .notification-dropdown-header {
+            padding: 16px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notification-dropdown-header h6 {
+            margin: 0;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .notification-dropdown-body {
+            padding: 8px;
+        }
+
+        .notification-item {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-left: 3px solid transparent;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notification-item.unread {
+            background: #f8f9ff;
+            border-left-color: var(--golden-brown);
+        }
+
+        .notification-item.success {
+            border-left-color: #28a745;
+        }
+
+        .notification-item.warning {
+            border-left-color: #ffc107;
+        }
+
+        .notification-item.info {
+            border-left-color: #17a2b8;
+        }
+
+        .notification-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 4px;
+        }
+
+        .notification-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2c3e50;
+        }
+
+        .notification-item-time {
+            font-size: 0.75rem;
+            color: #6c757d;
+            white-space: nowrap;
+        }
+
+        .notification-item-message {
+            font-size: 0.85rem;
+            color: #495057;
+            line-height: 1.4;
+        }
+
+        .notification-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .notification-empty i {
+            font-size: 3rem;
+            margin-bottom: 12px;
+            opacity: 0.3;
+        }
+
+        /* Added responsive calendar section styles for tablet/laptop */
+        .calendar-section {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .calendar-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Tablet and laptop: side-by-side layout */
+        @media (min-width: 768px) {
+            .calendar-wrapper {
+                flex-direction: row;
+                align-items: flex-start;
+            }
+
+            .calendar-left {
+                flex: 0 0 50%;
+                max-width: 50%;
+            }
+
+            .calendar-right {
+                flex: 0 0 50%;
+                max-width: 50%;
+                padding-left: 20px;
+                border-left: 2px solid #e9ecef;
+            }
+
+            .tasks-display {
+                margin-top: 0 !important;
+                padding-top: 0 !important;
+                border-top: none !important;
+            }
+        }
+
+        .calendar-header-section {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-header-section h5 {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .add-task-btn {
+            background: var(--golden-brown);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-task-btn:hover {
+            background: #8B6F47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 124, 85, 0.3);
+        }
+
+        .calendar-container {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .calendar-nav button {
+            background: none;
+            border: none;
+            color: var(--golden-brown);
+            font-size: 1.2rem;
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .calendar-nav button:hover {
+            background: rgba(165, 124, 85, 0.1);
+        }
+
+        .calendar-month-year {
+            font-weight: 600;
+            font-size: 1rem;
+            color: #2c3e50;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+        }
+
+        .calendar-day-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #6c757d;
+            padding: 8px 4px;
+        }
+
+        .calendar-date {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            background: white;
+        }
+
+        .calendar-date:hover {
+            background: rgba(165, 124, 85, 0.1);
+            transform: scale(1.05);
+        }
+
+        .calendar-date.today {
+            background: var(--golden-brown);
+            color: white;
+            font-weight: 600;
+        }
+
+        .calendar-date.has-task {
+            background: rgba(165, 124, 85, 0.15);
+            font-weight: 600;
+            color: var(--golden-brown);
+        }
+
+        .calendar-date.has-task::after {
+            content: '';
+            position: absolute;
+            bottom: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--golden-brown);
+            border-radius: 50%;
+        }
+
+        .calendar-date.selected {
+            background: var(--golden-brown);
+            color: white;
+        }
+
+        .calendar-date.other-month {
+            color: #adb5bd;
+        }
+
+        .calendar-date.disabled {
+            cursor: not-allowed;
+            opacity: 0.3;
+        }
+
+        .tasks-display {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+
+        .tasks-display h6 {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: #2c3e50;
+        }
+
+        .task-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            border-left: 3px solid var(--golden-brown);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-item-content {
+            flex: 1;
+        }
+
+        .task-item-title {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #2c3e50;
+            margin-bottom: 4px;
+        }
+
+        .task-item-date {
+            font-size: 0.8rem;
+            color: #6c757d;
+        }
+
+        .task-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .task-item-actions button {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .task-item-actions button:hover {
+            background: #f8f9fa;
+            color: var(--golden-brown);
+        }
+
+        .no-tasks {
+            text-align: center;
+            padding: 20px;
+            color: #6c757d;
+        }
+
+        /* Added task modal styles */
+        .task-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1050;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .task-modal.show {
+            display: flex;
+        }
+
+        .task-modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .task-modal-header {
+            padding: 20px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-modal-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+        .task-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #6c757d;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .task-modal-close:hover {
+            background: #f8f9fa;
+            color: #2c3e50;
+        }
+
+        .task-modal-body {
+            padding: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--golden-brown);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Custom date picker styles */
+        .custom-date-picker {
+            position: relative;
+        }
+
+        .date-picker-input {
+            cursor: pointer;
+        }
+
+        .date-picker-dropdown {
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            display: none;
+            z-index: 10;
+        }
+
+        .date-picker-dropdown.show {
+            display: block;
+        }
+
+        .task-modal-footer {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .btn-cancel {
+            background: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            background: #dee2e6;
+        }
+
+        .btn-save {
+            background: var(--golden-brown);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-save:hover {
+            background: #8B6F47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 124, 85, 0.3);
+        }
+
+        /* Enhanced stat cards with better mobile spacing */
+        .stat-card {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        /* Better spacing for mobile */
+        @media (max-width: 768px) {
+            .motivation-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .motivation-card h4 {
+                font-size: 1rem;
+            }
+
+            .motivation-card .highlight {
+                font-size: 1.2rem;
+            }
+
+            .notification-dropdown {
+                width: 320px;
+            }
+
+            .calendar-section {
+                padding: 16px;
+            }
+
+            .calendar-date {
+                font-size: 0.85rem;
+            }
+
+            .task-modal-content {
+                margin: 0 10px;
+            }
+        }
     </style>
 </head>
 
 <body>
     {% include 'nav.html' %}
+    
+    <!-- Added notification bell icon (will be positioned in nav via JS) -->
+    <div class="notification-bell" id="notificationBell" style="display: none;">
+        <i class="fas fa-bell notification-bell-icon"></i>
+        <span class="notification-bell-badge" id="notificationBellBadge">0</span>
+        
+        <div class="notification-dropdown" id="notificationDropdown">
+            <div class="notification-dropdown-header">
+                <h6>Notifications</h6>
+                <button class="btn btn-sm btn-link text-decoration-none" onclick="markAllAsRead()" style="font-size: 0.85rem; color: var(--golden-brown);">
+                    Mark all read
+                </button>
+            </div>
+            <div class="notification-dropdown-body" id="notificationDropdownBody">
+                <!-- Notifications will be populated by JavaScript -->
+            </div>
+        </div>
+    </div>
+
     <div class="fab-container d-lg-none">
         <button class="fab" id="mainFab">
             <i class="fas fa-plus"></i>
@@ -45,11 +696,17 @@
             </button>
         </div>
     </div>
+    
     <main class="main-content">
         <div class="container-fluid">
             <div class="dashboard-welcome">
                 <h1 class="welcome-title">Welcome Back!</h1>
                 <p class="welcome-subtitle">Your baking business at a glance</p>
+            </div>
+
+            <!-- Added motivation card section -->
+            <div id="motivationCard" style="display: none;">
+                <!-- Motivation card will be populated by JavaScript -->
             </div>
 
             <div class="mb-4">
@@ -139,6 +796,50 @@
                 </div>
             </div>
 
+            <!-- Updated calendar section with responsive layout -->
+            <div class="calendar-section">
+                <div class="calendar-header-section">
+                    <h5>
+                        <i class="fas fa-calendar-alt"></i>
+                        Task Calendar
+                    </h5>
+                    <button class="add-task-btn" onclick="openTaskModal()">
+                        <i class="fas fa-plus"></i> Add Task
+                    </button>
+                </div>
+
+                <div class="calendar-wrapper">
+                    <!-- Left side: Calendar -->
+                    <div class="calendar-left">
+                        <div class="calendar-container">
+                            <div class="calendar-nav">
+                                <button onclick="previousMonth()">
+                                    <i class="fas fa-chevron-left"></i>
+                                </button>
+                                <div class="calendar-month-year" id="calendarMonthYear"></div>
+                                <button onclick="nextMonth()">
+                                    <i class="fas fa-chevron-right"></i>
+                                </button>
+                            </div>
+
+                            <div class="calendar-grid" id="calendarGrid">
+                                <!-- Calendar will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right side: Tasks display -->
+                    <div class="calendar-right">
+                        <div class="tasks-display" id="tasksDisplay" style="display: none;">
+                            <h6 id="tasksDisplayTitle">Tasks</h6>
+                            <div id="tasksDisplayContent">
+                                <!-- Tasks will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="row g-4">
                 <div class="col-12 col-lg-6">
                     <div class="card">
@@ -170,6 +871,56 @@
             </div>
         </div>
     </main>
+
+    <!-- Added task modal -->
+    <div class="task-modal" id="taskModal">
+        <div class="task-modal-content">
+            <div class="task-modal-header">
+                <h5>Add New Task</h5>
+                <button class="task-modal-close" onclick="closeTaskModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="task-modal-body">
+                <form id="taskForm" onsubmit="saveTask(event)">
+                    <div class="form-group">
+                        <label for="taskTitle">Task Title *</label>
+                        <input type="text" id="taskTitle" placeholder="e.g., Deliver cake to Snehi" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDate">Date *</label>
+                        <div class="custom-date-picker">
+                            <input type="text" id="taskDate" class="date-picker-input" placeholder="Select date" readonly required>
+                            <div class="date-picker-dropdown" id="datePickerDropdown">
+                                <div class="calendar-nav">
+                                    <button type="button" onclick="previousMonthPicker()">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </button>
+                                    <div class="calendar-month-year" id="pickerMonthYear"></div>
+                                    <button type="button" onclick="nextMonthPicker()">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </button>
+                                </div>
+                                <div class="calendar-grid" id="pickerCalendarGrid">
+                                    <!-- Date picker calendar will be populated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="taskDescription">Description</label>
+                        <textarea id="taskDescription" placeholder="Add any additional details..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="task-modal-footer">
+                <button type="button" class="btn-cancel" onclick="closeTaskModal()">Cancel</button>
+                <button type="submit" form="taskForm" class="btn-save">Save Task</button>
+            </div>
+        </div>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/js/api_caller.js"></script>
