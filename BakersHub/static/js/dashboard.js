@@ -14,6 +14,46 @@ let selectedDate = null
 let tasks = []
 const pickerDate = new Date()
 
+let tutorialActive = false
+let currentTutorialStep = 0
+const tutorialSteps = [
+  {
+    element: "#toggleFiltersBtn",
+    title: "Filter Your Data",
+    description:
+      "Click here to filter your dashboard by different time periods. You can view this month, last month, or even set a custom date range to analyze your business performance.",
+    position: "bottom",
+  },
+  {
+    element: "#statsContainer",
+    title: "Key Performance Indicators",
+    description:
+      "These 4 cards show your most important metrics: Total Profit, Completed Sales, Total Sales, and Total Expenses. Track your business performance at a glance!",
+    position: "bottom",
+  },
+  {
+    element: ".calendar-section",
+    title: "Task Calendar",
+    description:
+      "Manage your baking schedule here! Click on any date to view tasks, or use the 'Add Task' button to create new reminders for deliveries, orders, or ingredient purchases.",
+    position: "top",
+  },
+  {
+    element: "#recentOrdersContainer",
+    title: "Recent Orders",
+    description:
+      "View your latest orders here. You can see customer details, order items, delivery dates, and order status. Click 'View All' to see your complete order history.",
+    position: "top",
+  },
+  {
+    element: "#recentExpensesContainer",
+    title: "Recent Expenses",
+    description:
+      "Track your business expenses here. Monitor spending on raw materials, packaging, transport, and more. Keep your costs under control to maximize profits!",
+    position: "top",
+  },
+]
+
 // Initialize Dashboard
 async function initDashboard(dashboard_url_param, csrf_token_param) {
   dashboard_url = dashboard_url_param
@@ -31,8 +71,9 @@ async function initDashboard(dashboard_url_param, csrf_token_param) {
 function checkFirstLogin() {
   const urlParams = new URLSearchParams(window.location.search)
   const isFirstLogin = urlParams.get("is_first_login")
+    FORCEendTutorial()
 
-  if (isFirstLogin === "TRUE") {
+  if (isFirstLogin === "true") {
     setTimeout(() => {
       const duration = 3000
       const end = Date.now() + duration
@@ -67,7 +108,173 @@ function checkFirstLogin() {
       time: "Just now",
       unread: true,
     })
+
+    setTimeout(() => {
+      showTutorialWelcome()
+    }, 3500)
+  } else{
   }
+}
+
+function showTutorialWelcome() {
+  const modal = document.getElementById("tutorialWelcomeModal")
+  modal.classList.add("show")
+}
+
+function declineTutorial() {
+  const modal = document.getElementById("tutorialWelcomeModal")
+  modal.classList.remove("show")
+}
+
+function startTutorial() {
+  const modal = document.getElementById("tutorialWelcomeModal")
+  modal.classList.remove("show")
+
+  tutorialActive = true
+  currentTutorialStep = 0
+  showTutorialStep()
+}
+
+function showTutorialStep() {
+  if (currentTutorialStep >= tutorialSteps.length) {
+    endTutorial()
+    return
+  }
+
+  const step = tutorialSteps[currentTutorialStep]
+  const element = document.querySelector(step.element)
+
+  if (!element) {
+    console.error(`Tutorial element not found: ${step.element}`)
+    nextTutorialStep()
+    return
+  }
+
+  const headerOffset = 100
+  const elementPosition = element.getBoundingClientRect().top
+  const offsetPosition = elementPosition + window.scrollY - headerOffset
+
+  window.scrollTo({
+    top: offsetPosition,
+    behavior: "smooth",
+  })
+
+  setTimeout(() => {
+    // Show overlay
+    const overlay = document.getElementById("tutorialOverlay")
+    overlay.classList.add("show")
+
+    // Position spotlight with scroll offset
+    const spotlight = document.getElementById("tutorialSpotlight")
+    const rect = element.getBoundingClientRect()
+    const padding = 8
+
+    spotlight.style.display = "block"
+    spotlight.style.top = `${window.scrollY + rect.top - padding}px`
+    spotlight.style.left = `${rect.left - padding}px`
+    spotlight.style.width = `${rect.width + padding * 2}px`
+    spotlight.style.height = `${rect.height + padding * 2}px`
+
+    // Show tooltip
+    const tooltip = document.getElementById("tutorialTooltip")
+    const tooltipTitle = document.getElementById("tutorialTitle")
+    const tooltipDescription = document.getElementById("tutorialDescription")
+    const tooltipProgress = document.getElementById("tutorialProgress")
+    const prevBtn = document.getElementById("tutorialPrevBtn")
+    const nextBtn = document.getElementById("tutorialNextBtn")
+
+    tooltipTitle.textContent = step.title
+    tooltipDescription.textContent = step.description
+    tooltipProgress.textContent = `Step ${currentTutorialStep + 1} of ${tutorialSteps.length}`
+
+    // Show/hide previous button
+    prevBtn.style.display = currentTutorialStep > 0 ? "inline-block" : "none"
+
+    // Update next button text
+    nextBtn.textContent = currentTutorialStep === tutorialSteps.length - 1 ? "Finish" : "Next"
+
+    positionTooltip(tooltip, rect, step.position)
+
+    tooltip.classList.add("show")
+  }, 600)
+}
+
+function positionTooltip(tooltip, elementRect, position) {
+  const isMobile = window.innerWidth < 768
+  const viewportHeight = window.innerHeight
+  const padding = 20
+
+  if (isMobile) {
+    tooltip.style.bottom = "20px"
+    tooltip.style.top = "auto"
+    tooltip.style.left = "50%"
+    tooltip.style.transform = "translateX(-50%)"
+  } else {
+    const elementBottom = elementRect.bottom
+    const elementTop = elementRect.top
+    const spaceBelow = viewportHeight - elementBottom
+    const spaceAbove = elementTop
+
+    // Show tooltip below if there's more space, otherwise above
+    if (spaceBelow > 250 || spaceBelow > spaceAbove) {
+      tooltip.style.top = `${elementBottom + padding}px`
+      tooltip.style.bottom = "auto"
+    } else {
+      tooltip.style.bottom = `${viewportHeight - elementTop + padding}px`
+      tooltip.style.top = "auto"
+    }
+
+    tooltip.style.left = "50%"
+    tooltip.style.transform = "translateX(-50%)"
+  }
+}
+
+function nextTutorialStep() {
+  currentTutorialStep++
+  if (currentTutorialStep >= tutorialSteps.length) {
+    endTutorial()
+  } else {
+    showTutorialStep()
+  }
+}
+
+function previousTutorialStep() {
+  if (currentTutorialStep > 0) {
+    currentTutorialStep--
+    showTutorialStep()
+  }
+}
+
+function skipTutorial() {
+  if (confirm("Are you sure you want to skip the tutorial? You can always explore the features on your own.")) {
+    endTutorial()
+  }
+}
+
+function endTutorial() {
+  tutorialActive = false
+
+  const overlay = document.getElementById("tutorialOverlay")
+  const tooltip = document.getElementById("tutorialTooltip")
+  const spotlight = document.getElementById("tutorialSpotlight")
+
+  overlay.classList.remove("show")
+  tooltip.classList.remove("show")
+  spotlight.style.display = "none"
+
+  showSuccessMessage("Tutorial completed! Enjoy using Bakers Hub!")
+}
+
+function FORCEendTutorial() {
+  tutorialActive = false
+
+  const overlay = document.getElementById("tutorialOverlay")
+  const tooltip = document.getElementById("tutorialTooltip")
+  const spotlight = document.getElementById("tutorialSpotlight")
+
+  overlay.classList.remove("show")
+  tooltip.classList.remove("show")
+  spotlight.style.display = "none"
 }
 
 function initializeNotificationBell() {
@@ -200,8 +407,33 @@ async function loadDashboardData() {
 }
 
 function updateKPIs() {
-  // Placeholder for updateKPIs function
-  console.log("Updating KPIs")
+  if (!dashboardData) return
+
+  const totalProfit = dashboardData.total_profit || 0
+  const completedSalesCount = dashboardData.total_completed_sales || 0
+  const totalSales = dashboardData.total_sales || 0
+  const totalExpenses = dashboardData.total_expenses || 0
+
+  // Update profit with color based on positive/negative
+  const profitElement = document.getElementById("totalProfit")
+  profitElement.textContent = `₹${totalProfit.toFixed(2)}`
+
+  // Change color based on profit/loss
+  const profitCard = profitElement.closest(".stat-card")
+  const profitIcon = profitCard.querySelector(".stat-icon")
+  if (totalProfit < 0) {
+    profitIcon.classList.remove("bg-success")
+    profitIcon.classList.add("bg-danger")
+    profitElement.style.color = "#dc3545"
+  } else {
+    profitIcon.classList.remove("bg-danger")
+    profitIcon.classList.add("bg-success")
+    profitElement.style.color = ""
+  }
+
+  document.getElementById("completedSalesCount").textContent = completedSalesCount
+  document.getElementById("totalSales").textContent = `₹${totalSales.toFixed(2)}`
+  document.getElementById("totalExpenses").textContent = `₹${totalExpenses.toFixed(2)}`
 }
 
 function updateMotivationCard() {
@@ -241,7 +473,13 @@ function updateMotivationCard() {
       </div>
     `
   } else {
-    motivationContainer.style.display = "none"
+    motivationContainer.style.display = "block"
+    motivationContainer.innerHTML = `
+      <div class="motivation-card">
+        <h4>${emoji} Hola!</h4>
+        <p>${message}</p>
+      </div>
+    `
   }
 }
 
@@ -440,9 +678,9 @@ async function applyFilters() {
     currentFilters.end_date = null
   }
 
-  window.toggle_loader()
+  toggle_loader()
   await loadDashboardData()
-  window.toggle_loader()
+  toggle_loader()
 }
 
 function toggleFilters() {

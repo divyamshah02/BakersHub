@@ -622,6 +622,196 @@
             transform: scale(0.98);
         }
 
+        /* Added tutorial overlay and spotlight styles */
+        .tutorial-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.75);
+            z-index: 9998;
+            display: none;
+        }
+
+        .tutorial-overlay.show {
+            display: block;
+        }
+
+        .tutorial-spotlight {
+            position: absolute;
+            border: 3px solid var(--golden-brown);
+            border-radius: 12px;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.75), 0 0 20px rgba(165, 124, 85, 0.8);
+            z-index: 9999;
+            pointer-events: none;
+            transition: all 0.4s ease;
+        }
+
+        .tutorial-tooltip {
+            position: fixed;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 400px;
+            width: calc(100vw - 40px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            display: none;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .tutorial-tooltip.show {
+            display: block;
+        }
+
+        .tutorial-tooltip h4 {
+            margin: 0 0 12px 0;
+            color: var(--golden-brown);
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tutorial-tooltip p {
+            margin: 0 0 20px 0;
+            color: #495057;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .tutorial-tooltip-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tutorial-progress {
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+
+        .tutorial-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .tutorial-btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+
+        .tutorial-btn-skip {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tutorial-btn-skip:hover {
+            background: #dee2e6;
+        }
+
+        .tutorial-btn-prev {
+            background: #f8f9fa;
+            color: var(--golden-brown);
+            border: 1px solid var(--golden-brown);
+        }
+
+        .tutorial-btn-prev:hover {
+            background: rgba(165, 124, 85, 0.1);
+        }
+
+        .tutorial-btn-next {
+            background: var(--golden-brown);
+            color: white;
+        }
+
+        .tutorial-btn-next:hover {
+            background: #8B6F47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 124, 85, 0.3);
+        }
+
+        .tutorial-welcome-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .tutorial-welcome-modal.show {
+            display: flex;
+        }
+
+        .tutorial-welcome-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+
+        .tutorial-welcome-content h3 {
+            color: var(--golden-brown);
+            margin-bottom: 16px;
+            font-size: 1.5rem;
+        }
+
+        .tutorial-welcome-content p {
+            color: #495057;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .tutorial-welcome-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .tutorial-welcome-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+        .tutorial-welcome-btn-no {
+            background: #e9ecef;
+            color: #495057;
+        }
+
+        .tutorial-welcome-btn-no:hover {
+            background: #dee2e6;
+        }
+
+        .tutorial-welcome-btn-yes {
+            background: var(--golden-brown);
+            color: white;
+        }
+
+        .tutorial-welcome-btn-yes:hover {
+            background: #8B6F47;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(165, 124, 85, 0.3);
+        }
+
         /* Better spacing for mobile */
         @media (max-width: 768px) {
             .motivation-card {
@@ -651,6 +841,64 @@
 
             .task-modal-content {
                 margin: 0 10px;
+            }
+
+            .tutorial-tooltip {
+                max-width: calc(100vw - 32px);
+                width: calc(100vw - 32px);
+                padding: 16px;
+                bottom: 20px;
+                top: auto;
+            }
+
+            .tutorial-tooltip h4 {
+                font-size: 1rem;
+            }
+
+            .tutorial-tooltip p {
+                font-size: 0.9rem;
+            }
+
+            .tutorial-tooltip-footer {
+                flex-direction: column;
+                gap: 12px;
+            }
+
+            .tutorial-progress {
+                text-align: center;
+                width: 100%;
+            }
+
+            .tutorial-buttons {
+                width: 100%;
+                flex-wrap: wrap;
+            }
+
+            .tutorial-btn {
+                flex: 1;
+                min-width: 100px;
+            }
+
+            .tutorial-welcome-content {
+                padding: 20px;
+                max-width: calc(100vw - 40px);
+            }
+
+            .tutorial-welcome-content h3 {
+                font-size: 1.2rem;
+            }
+
+            .tutorial-welcome-content p {
+                font-size: 0.9rem;
+            }
+
+            .tutorial-welcome-buttons {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .tutorial-welcome-btn {
+                width: 100%;
             }
         }
     </style>
@@ -918,6 +1166,34 @@
             <div class="task-modal-footer">
                 <button type="button" class="btn-cancel" onclick="closeTaskModal()">Cancel</button>
                 <button type="submit" form="taskForm" class="btn-save">Save Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Added tutorial overlay, spotlight, and tooltip elements -->
+    <div class="tutorial-overlay" id="tutorialOverlay"></div>
+    <div class="tutorial-spotlight" id="tutorialSpotlight"></div>
+    <div class="tutorial-tooltip" id="tutorialTooltip">
+        <h4 id="tutorialTitle"></h4>
+        <p id="tutorialDescription"></p>
+        <div class="tutorial-tooltip-footer">
+            <div class="tutorial-progress" id="tutorialProgress"></div>
+            <div class="tutorial-buttons">
+                <button class="tutorial-btn tutorial-btn-skip" onclick="skipTutorial()">Skip</button>
+                <button class="tutorial-btn tutorial-btn-prev" id="tutorialPrevBtn" onclick="previousTutorialStep()" style="display: none;">Previous</button>
+                <button class="tutorial-btn tutorial-btn-next" id="tutorialNextBtn" onclick="nextTutorialStep()">Next</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Added tutorial welcome modal -->
+    <div class="tutorial-welcome-modal" id="tutorialWelcomeModal">
+        <div class="tutorial-welcome-content">
+            <h3>🎉 Welcome to Bakers Hub!</h3>
+            <p>Would you like a quick tour of the dashboard? We'll show you how to track your orders, manage expenses, and use the task calendar.</p>
+            <div class="tutorial-welcome-buttons">
+                <button class="tutorial-welcome-btn tutorial-welcome-btn-no" onclick="declineTutorial()">No, thanks</button>
+                <button class="tutorial-welcome-btn tutorial-welcome-btn-yes" onclick="startTutorial()">Yes, show me!</button>
             </div>
         </div>
     </div>
